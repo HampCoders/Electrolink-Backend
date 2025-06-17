@@ -3,6 +3,12 @@ using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Configura
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using Hampcoders.Electrolink.API.Shared.Domain.Repositories;
 
+using Hampcoders.Electrolink.API.Assets.Domain.Repositories;
+using Hampcoders.Electrolink.API.Assets.Domain.Services;
+using Hampcoders.Electrolink.API.Assets.Application.Internal.CommandServices;
+using Hampcoders.Electrolink.API.Assets.Application.Internal.QueryServices;
+using Hampcoders.Electrolink.API.Assets.Infrastructure.Persistence.EFC.Repositories;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -64,6 +70,26 @@ builder.Services.AddCors(options =>
 });
 
 // Dependency Injection
+// Shared Bounded Context
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Assets Bounded Context - Repositories
+builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
+builder.Services.AddScoped<ITechnicianInventoryRepository, TechnicianInventoryRepository>();
+builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
+builder.Services.AddScoped<IComponentTypeRepository, ComponentTypeRepository>();
+
+// Assets Bounded Context - Command Services
+builder.Services.AddScoped<IPropertyCommandService, PropertyCommandService>();
+builder.Services.AddScoped<ITechnicianInventoryCommandService, TechnicianInventoryCommandService>();
+builder.Services.AddScoped<IComponentCommandService, ComponentCommandService>();
+builder.Services.AddScoped<IComponentTypeCommandService, ComponentTypeCommandService>();
+
+// Assets Bounded Context - Query Services
+builder.Services.AddScoped<IPropertyQueryService, PropertyQueryService>();
+builder.Services.AddScoped<ITechnicianInventoryQueryService, TechnicianInventoryQueryService>();
+builder.Services.AddScoped<IComponentQueryService, ComponentQueryService>();
+builder.Services.AddScoped<IComponentTypeQueryService, ComponentTypeQueryService>();
 
 // Shared Bounded Context
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
