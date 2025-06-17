@@ -1,3 +1,3 @@
 namespace Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects;
 
-public record TechnicianId(string Id);
+public record TechnicianId(Guid Id);

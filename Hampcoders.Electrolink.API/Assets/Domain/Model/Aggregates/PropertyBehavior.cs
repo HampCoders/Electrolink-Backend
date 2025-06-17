@@ -9,10 +9,9 @@ public partial class Property
     private readonly List<PropertyPhoto> _photos = new();
     public IReadOnlyCollection<PropertyPhoto> Photos => _photos.AsReadOnly();
 
-    public Property()
+    private Property()
     {
-        Status = EPropertyStatus.Active;
-        _photos = new List<PropertyPhoto>();
+       
     }
 
     public void AddPhoto(string photoUrl)
@@ -36,19 +35,19 @@ public partial class Property
 
     public void Handle(AddPhotoToPropertyCommand command)
     {
-        if(command.Id == Id)
+        if(command.Id == Id.Id)
             AddPhoto(command.PhotoUrl);
     }
     
     public void Handle(UpdatePropertyAddressCommand command)
     {
-        if (command.Id == Id)
+        if (command.Id == Id.Id)
             UpdateAddress(command.NewAddress);
     }
     
     public void Handle(DeactivatePropertyCommand command)
     {
-        if (command.Id == Id)
+        if (command.Id == Id.Id)
             Deactivate();
     }
 }

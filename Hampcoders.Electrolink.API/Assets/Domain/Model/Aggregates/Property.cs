@@ -7,7 +7,7 @@ namespace Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
 
 public partial class Property
 {
-    public string Id { get; private set; }
+    public PropertyId Id { get; private set; }
     public OwnerId OwnerId { get; private set; }
     public Address Address { get; private set; }
     public Region Region { get; private set; }
@@ -21,7 +21,15 @@ public partial class Property
         District = district;
     }
 
-    public Property(CreatePropertyCommand command) 
-        : this(command.OwnerId, command.Address, command.Region, command.District) {}
+    public Property(CreatePropertyCommand command)
+    {
+        Id = PropertyId.NewId();
+        OwnerId = command.OwnerId;
+        Address = command.Address;
+        Region = command.Region;
+        District = command.District;
+        Status = EPropertyStatus.Active;
+        _photos = new List<PropertyPhoto>();
+    }
     
 }
