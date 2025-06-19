@@ -26,7 +26,7 @@ public class ComponentCommandService(IComponentRepository componentRepository, I
         return component;
     }
 
-    public async Task<Component?> Handle(UpdateComponentInfoCommand command)
+    public async Task<Component?> Handle(UpdateComponentCommand command)
     {
         var component = await componentRepository.FindByIdAsync(new (command.Id));
         if (component is null) throw new ArgumentException("Component not found.");
@@ -36,13 +36,17 @@ public class ComponentCommandService(IComponentRepository componentRepository, I
         return component;
     }
 
-    public async Task<Component?> Handle(DeactivateComponentCommand command)
+    public async Task<bool> Handle(DeleteComponentCommand command)
     {
-        var component = await componentRepository.FindByIdAsync(new (command.Id));
-        if (component is null) throw new ArgumentException("Component not found.");
-
+        var component = await componentRepository.FindByIdAsync(new ComponentId(command.Id));
+        if (component is null)
+        {
+            return false;
+        }
+        
         component.Deactivate();
         await unitOfWork.CompleteAsync();
-        return component;
+
+        return true;
     }
 }

@@ -6,6 +6,6 @@ namespace Hampcoders.Electrolink.API.Assets.Domain.Services;
 public interface IComponentCommandService
 {
     Task<Component?> Handle(CreateComponentCommand command);
-    Task<Component?> Handle(UpdateComponentInfoCommand command);
-    Task<Component?> Handle(DeactivateComponentCommand command);
+    Task<Component?> Handle(UpdateComponentCommand command);
+    Task<bool> Handle(DeleteComponentCommand command);
 }

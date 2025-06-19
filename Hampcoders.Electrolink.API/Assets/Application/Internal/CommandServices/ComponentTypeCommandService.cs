@@ -1,5 +1,6 @@
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Commands;
+using Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects;
 using Hampcoders.Electrolink.API.Assets.Domain.Repositories;
 using Hampcoders.Electrolink.API.Assets.Domain.Services;
 using Hampcoders.Electrolink.API.Shared.Domain.Repositories;
@@ -21,7 +22,9 @@ public class ComponentTypeCommandService(IComponentTypeRepository componentTypeR
 
     public async Task<ComponentType?> Handle(UpdateComponentTypeCommand command)
     {
-        var componentType = await componentTypeRepository.FindByIdAsync(command.Id);
+        // Envuelve el 'int' en su Value Object antes de pasarlo al repositorio.
+        var componentTypeId = new ComponentTypeId(command.Id);
+        var componentType = await componentTypeRepository.FindByIdAsync(componentTypeId);
         if (componentType is null) throw new ArgumentException("Component type not found.");
 
         componentType.Update(command);
@@ -29,18 +32,24 @@ public class ComponentTypeCommandService(IComponentTypeRepository componentTypeR
         return componentType;
     }
 
-    public async Task<ComponentType?> Handle(DeleteComponentTypeCommand command)
+    public async Task<bool> Handle(DeleteComponentTypeCommand command)
     {
-        var componentType = await componentTypeRepository.FindByIdAsync(command.Id);
-        if (componentType is null) throw new ArgumentException("Component type not found.");
+        var componentTypeId = new ComponentTypeId(command.Id);
+        var componentType = await componentTypeRepository.FindByIdAsync(componentTypeId);
+        if (componentType is null)
+        {
+            return false;
+        }
 
-        // Validación: No permitir borrar un tipo si está en uso por algún componente
         var componentsUsingType = await componentRepository.FindByTypeIdAsync(componentType.Id);
         if (componentsUsingType.Any())
             throw new InvalidOperationException("Cannot delete a component type that is currently in use.");
 
         componentTypeRepository.Remove(componentType);
         await unitOfWork.CompleteAsync();
-        return componentType;
+        
+        return true; 
     }
+    
+    
 }
