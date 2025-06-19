@@ -21,11 +21,11 @@ public class CatalogController(
         if (componentType is null) return BadRequest();
 
         var resourceResponse = ComponentTypeResourceFromEntityAssembler.ToResourceFromEntity(componentType);
-        return CreatedAtAction(nameof(GetCTById), new { typeId = resourceResponse.Id }, resourceResponse);
+        return CreatedAtAction(nameof(GetCtById), new { typeId = resourceResponse.Id }, resourceResponse);
     }
 
-    [HttpGet("types/{typeId:int}", Name = nameof(GetCTById))] // Añadimos un nombre para la ruta
-    public async Task<IActionResult> GetCTById(int typeId, [FromServices] IComponentTypeQueryService queryService)
+    [HttpGet("types/{typeId:int}", Name = nameof(GetCtById))] // Añadimos un nombre para la ruta
+    public async Task<IActionResult> GetCtById(int typeId, [FromServices] IComponentTypeQueryService queryService)
     {
         var query = new GetComponentTypeByIdQuery(typeId);
         var componentType = await queryService.Handle(query);
@@ -42,8 +42,14 @@ public class CatalogController(
         var component = await componentCommandService.Handle(createComponentCommand);
         if (component is null) return BadRequest();
 
-        // Aquí necesitarías un ComponentResourceFromEntityAssembler
-        // ...
-        return Ok(component); // Simplificado por ahora
+        // --- INICIO DE LA CORRECCIÓN ---
+
+        // 1. Se llama al Assembler para convertir la entidad en un recurso para la API.
+        var componentResource = ComponentResourceFromEntityAssembler.ToResourceFromEntity(component);
+
+        // 2. Se devuelve el recurso (DTO), no la entidad del dominio.
+        return Ok(componentResource); 
+
+        // --- FIN DE LA CORRECCIÓN ---
     }
 }

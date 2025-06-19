@@ -2,7 +2,6 @@ using Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Entities;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Hampcoders.Electrolink.API.Assets.Infrastructure.Persistence.EFC.Configuration.Extensions;
 
@@ -65,42 +64,52 @@ public static class ModelBuilderExtensions
 
             // --- INICIO DE LA SOLUCIÓN FINAL ---
             // Se configura la colección de Photos como un tipo poseído (Owned Type).
-            b.OwnsMany(p => p.Photos, ownedNavigationBuilder =>
+            b.OwnsOne(p => p.Photo, photoBuilder =>
             {
-                // Se especifica el nombre de la tabla para las fotos.
-                ownedNavigationBuilder.ToTable("property_photos");
-                // Se define la clave foránea que apunta de vuelta a la tabla 'properties'.
-                ownedNavigationBuilder.WithOwner().HasForeignKey("property_id");
-                // Se define la clave primaria de la tabla 'property_photos'.
-                // Usamos la FK y la propia URL para asegurar que no haya URLs duplicadas por propiedad.
-                ownedNavigationBuilder.HasKey("property_id", nameof(PropertyPhoto.PhotoURL));
-                // Se configuran las propiedades de la entidad poseída.
-                ownedNavigationBuilder.Property(photo => photo.PhotoURL).IsRequired().HasMaxLength(500);
+                // Mapeamos la propiedad del Value Object a una columna en la tabla 'properties'.
+                // Como la propiedad 'Photo' puede ser nula, la columna también debe serlo.
+                photoBuilder.Property(photo => photo.PhotoURL)
+                    .HasColumnName("photo_url") // Nombre de la columna
+                    .HasMaxLength(500)
+                    .IsRequired(false); // Se permite que sea nulo
             });
         });
         
-        // --- Configuración para TechnicianInventory y ComponentStock ---
         builder.Entity<TechnicianInventory>(b =>
         {
             b.ToTable("technician_inventories");
-            b.HasKey(i => i.TechnicianId);
-            b.Property(i => i.TechnicianId).HasConversion(id => id.Id, value => new TechnicianId(value));
-            
-            b.HasMany(i => i.StockItems).WithOne().HasForeignKey(cs => cs.TechnicianInventoryId).IsRequired();
+            b.HasKey(i => i.Id);
+            b.Property(i => i.Id).IsRequired().ValueGeneratedNever();  // CORRECCIÓN: Indicamos que es un Id generado por la aplicación
+    
+            b.Property(i => i.TechnicianId)
+                .HasConversion(id => id.Id, value => new TechnicianId(value))
+                .IsRequired();
+            b.HasIndex(i => i.TechnicianId).IsUnique();
+    
+            b.HasMany(i => i.StockItems)
+                .WithOne()
+                .HasForeignKey(cs => cs.TechnicianInventoryId)
+                .IsRequired();
         });
 
         builder.Entity<ComponentStock>(b =>
         {
             b.ToTable("component_stocks");
             b.HasKey(cs => cs.Id);
+
             b.HasIndex(cs => new { cs.TechnicianInventoryId, cs.ComponentId }).IsUnique();
-            b.HasOne<Component>().WithMany().HasForeignKey(cs => cs.ComponentId).IsRequired();
+
+            b.HasOne<Component>()
+                .WithMany()
+                .HasForeignKey(cs => cs.ComponentId)
+                .IsRequired();
+
+            b.Property(cs => cs.TechnicianInventoryId).IsRequired();
             b.Property(cs => cs.ComponentId).HasConversion(id => id.Id, value => new ComponentId(value));
             b.Property(cs => cs.QuantityAvailable).IsRequired();
             b.Property(cs => cs.AlertThreshold).IsRequired();
             b.Property(cs => cs.LastUpdated).IsRequired();
         });
-
         // NOTA: No hay ningún builder.Entity<PropertyPhoto>() aquí. Fue eliminado.
     }
 }

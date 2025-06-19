@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hampcoders.Electrolink.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250617190915_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250619033155_FixTechnicianInventoryIdGeneration")]
+    partial class FixTechnicianInventoryIdGeneration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -104,10 +104,24 @@ namespace Hampcoders.Electrolink.API.Migrations
 
             modelBuilder.Entity("Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates.TechnicianInventory", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("CreatedDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt");
+
                     b.Property<Guid>("TechnicianId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("TechnicianId");
+                    b.Property<DateTimeOffset?>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("UpdatedAt");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TechnicianId")
+                        .IsUnique();
 
                     b.ToTable("technician_inventories", (string)null);
                 });
@@ -171,6 +185,12 @@ namespace Hampcoders.Electrolink.API.Migrations
                                 .HasColumnType("character varying(30)")
                                 .HasColumnName("address_country");
 
+                            b1.Property<decimal>("Latitude")
+                                .HasColumnType("numeric");
+
+                            b1.Property<decimal>("Longitude")
+                                .HasColumnType("numeric");
+
                             b1.Property<string>("Number")
                                 .IsRequired()
                                 .HasMaxLength(20)
@@ -222,6 +242,24 @@ namespace Hampcoders.Electrolink.API.Migrations
                                 .HasForeignKey("PropertyId");
                         });
 
+                    b.OwnsOne("Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects.PropertyPhoto", "Photo", b1 =>
+                        {
+                            b1.Property<Guid>("PropertyId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("PhotoURL")
+                                .HasMaxLength(500)
+                                .HasColumnType("character varying(500)")
+                                .HasColumnName("photo_url");
+
+                            b1.HasKey("PropertyId");
+
+                            b1.ToTable("properties");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PropertyId");
+                        });
+
                     b.OwnsOne("Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects.Region", "Region", b1 =>
                         {
                             b1.Property<Guid>("PropertyId")
@@ -247,30 +285,13 @@ namespace Hampcoders.Electrolink.API.Migrations
                                 .HasForeignKey("PropertyId");
                         });
 
-                    b.OwnsMany("Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects.PropertyPhoto", "Photos", b1 =>
-                        {
-                            b1.Property<Guid>("property_id")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("PhotoURL")
-                                .HasMaxLength(500)
-                                .HasColumnType("character varying(500)");
-
-                            b1.HasKey("property_id", "PhotoURL");
-
-                            b1.ToTable("property_photos", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("property_id");
-                        });
-
                     b.Navigation("Address")
                         .IsRequired();
 
                     b.Navigation("District")
                         .IsRequired();
 
-                    b.Navigation("Photos");
+                    b.Navigation("Photo");
 
                     b.Navigation("Region")
                         .IsRequired();

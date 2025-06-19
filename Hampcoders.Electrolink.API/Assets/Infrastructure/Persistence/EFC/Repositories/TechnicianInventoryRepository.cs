@@ -1,4 +1,5 @@
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
+using Hampcoders.Electrolink.API.Assets.Domain.Model.Entities;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects;
 using Hampcoders.Electrolink.API.Assets.Domain.Repositories;
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Configuration;
@@ -16,5 +17,11 @@ public class TechnicianInventoryRepository(AppDbContext context) : BaseRepositor
         return await Context.Set<TechnicianInventory>()
             .Include(i => i.StockItems)
             .FirstOrDefaultAsync(i => i.TechnicianId == technicianId);
+    }
+    
+    public Task AddComponentStockAsync(ComponentStock stockItem)
+    {
+        Context.Set<ComponentStock>().Add(stockItem);
+        return Task.CompletedTask;
     }
 }

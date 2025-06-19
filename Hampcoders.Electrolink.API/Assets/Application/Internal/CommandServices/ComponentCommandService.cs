@@ -1,5 +1,6 @@
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Commands;
+using Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects;
 using Hampcoders.Electrolink.API.Assets.Domain.Repositories;
 using Hampcoders.Electrolink.API.Assets.Domain.Services;
 using Hampcoders.Electrolink.API.Shared.Domain.Repositories;
@@ -10,9 +11,14 @@ public class ComponentCommandService(IComponentRepository componentRepository, I
 {
     public async Task<Component?> Handle(CreateComponentCommand command)
     {
-        var componentType = await componentTypeRepository.FindByIdAsync(command.ComponentTypeId);
+        
+        var componentType = await componentTypeRepository.FindByIdAsync(new ComponentTypeId(command.ComponentTypeId));
         if (componentType is null)
             throw new ArgumentException($"Component type with id {command.ComponentTypeId} not found.");
+
+        // 2. ¡NUEVA VALIDACIÓN! Validar que no exista ya un componente con el mismo nombre.
+        if (await componentRepository.ExistsByNameAsync(command.Name))
+            throw new ArgumentException($"A component with the name '{command.Name}' already exists.");
 
         var component = new Component(command);
         await componentRepository.AddAsync(component);

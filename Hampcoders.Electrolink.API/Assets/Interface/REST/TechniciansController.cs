@@ -1,3 +1,4 @@
+using Hampcoders.Electrolink.API.Assets.Domain.Model.Commands;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Queries;
 using Hampcoders.Electrolink.API.Assets.Domain.Services;
 using Hampcoders.Electrolink.API.Assets.Interface.REST.Resources;
@@ -13,6 +14,17 @@ public class TechniciansController(
     ITechnicianInventoryQueryService inventoryQueryService,
     IComponentQueryService componentQueryService) : ControllerBase // Necesitamos info de componentes
 {
+    
+    [HttpPost("{technicianId:guid}/inventory")]
+    public async Task<IActionResult> CreateTechnicianInventory(Guid technicianId)
+    {
+        var command = new CreateTechnicianInventoryCommand(technicianId);
+        var inventory = await inventoryCommandService.Handle(command);
+        if (inventory is null) return BadRequest("Could not create inventory.");
+
+        return StatusCode(201); 
+    }
+    
     // Endpoint para añadir un item al stock de un técnico específico
     [HttpPost("{technicianId:guid}/inventory/stock-items")]
     public async Task<IActionResult> AddStockItemToInventory(Guid technicianId, [FromBody] AddStockToInventoryResource resource)
@@ -34,13 +46,19 @@ public class TechniciansController(
         if (inventory is null) return NotFound();
 
         // Lógica de orquestación para enriquecer el DTO
-        // 1. Obtenemos los IDs de los componentes en el inventario
         var componentIds = inventory.StockItems.Select(item => item.ComponentId.Id).ToList();
+        if (!componentIds.Any())
+        {
+            // Si no hay items, devolvemos un inventario vacío.
+            var emptyResource = TechnicianInventoryResourceFromEntityAssembler.ToResourceFromEntity(inventory, new Dictionary<Guid, string>());
+            return Ok(emptyResource);
+        }
 
-        // 2. Buscamos los detalles de esos componentes
+        // CORREGIDO: Usamos el query y el manejador correctos.
         var components = await componentQueryService.Handle(new GetComponentsByIdsQuery(componentIds));
+
         var componentNames = components.ToDictionary(c => c.Id.Id, c => c.Name);
-        // 3. Usamos el Assembler con la información extra
+
         var inventoryResource = TechnicianInventoryResourceFromEntityAssembler.ToResourceFromEntity(inventory, componentNames);
         return Ok(inventoryResource);
     }

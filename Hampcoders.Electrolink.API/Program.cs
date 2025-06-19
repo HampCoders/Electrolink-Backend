@@ -59,6 +59,11 @@ builder.Services.AddSwaggerGen(options =>
             },
         });
     options.EnableAnnotations();
+    options.AddServer(new OpenApiServer
+    {
+        Url = "http://localhost:5055", // La URL donde corre tu API (vista en tus logs)
+        Description = "Development Server"
+    });
 });
 
 // Add CORS Policy

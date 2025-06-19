@@ -6,18 +6,27 @@ namespace Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
 public partial class Property
 {
     public EPropertyStatus Status { get; private set; }
-    private readonly List<PropertyPhoto> _photos = new();
-    public IReadOnlyCollection<PropertyPhoto> Photos => _photos.AsReadOnly();
+    public PropertyPhoto? Photo { get; private set; } // Puede ser nulo
+
 
     private Property()
     {
-       
+
     }
 
-    public void AddPhoto(string photoUrl)
+    /// <summary>
+    /// Establece o elimina la foto de la propiedad.
+    /// </summary>
+    /// <param name="photoUrl">La URL de la nueva foto, o null para eliminar la existente.</param>
+    
+    public void SetPhoto(string? photoUrl)
     {
-        if (_photos.Any(p => p.PhotoURL == photoUrl)) return;
-        _photos.Add(new PropertyPhoto(photoUrl));
+        if (string.IsNullOrWhiteSpace(photoUrl))
+        {
+            Photo = null;
+            return;
+        }
+        Photo = new PropertyPhoto(photoUrl);
     }
     
     private void UpdateAddress(Address newAddress)
@@ -36,7 +45,7 @@ public partial class Property
     public void Handle(AddPhotoToPropertyCommand command)
     {
         if(command.Id == Id.Id)
-            AddPhoto(command.PhotoUrl);
+            SetPhoto(command.PhotoUrl);
     }
     
     public void Handle(UpdatePropertyAddressCommand command)

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Hampcoders.Electrolink.API.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class FixTechnicianInventoryIdGeneration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,13 +37,16 @@ namespace Hampcoders.Electrolink.API.Migrations
                     address_city = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     address_postal_code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     address_country = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    Address_Latitude = table.Column<decimal>(type: "numeric", nullable: false),
+                    Address_Longitude = table.Column<decimal>(type: "numeric", nullable: false),
                     region_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     region_code = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     district_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     district_ubigeo = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false)
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    photo_url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -54,11 +57,14 @@ namespace Hampcoders.Electrolink.API.Migrations
                 name: "technician_inventories",
                 columns: table => new
                 {
-                    TechnicianId = table.Column<Guid>(type: "uuid", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TechnicianId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_technician_inventories", x => x.TechnicianId);
+                    table.PrimaryKey("PK_technician_inventories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -78,24 +84,6 @@ namespace Hampcoders.Electrolink.API.Migrations
                         name: "FK_components_component_types_component_type_id",
                         column: x => x.component_type_id,
                         principalTable: "component_types",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "property_photos",
-                columns: table => new
-                {
-                    PhotoURL = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    property_id = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_property_photos", x => new { x.property_id, x.PhotoURL });
-                    table.ForeignKey(
-                        name: "FK_property_photos_properties_property_id",
-                        column: x => x.property_id,
-                        principalTable: "properties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -124,7 +112,7 @@ namespace Hampcoders.Electrolink.API.Migrations
                         name: "FK_component_stocks_technician_inventories_TechnicianInventory~",
                         column: x => x.TechnicianInventoryId,
                         principalTable: "technician_inventories",
-                        principalColumn: "TechnicianId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -143,6 +131,12 @@ namespace Hampcoders.Electrolink.API.Migrations
                 name: "IX_components_component_type_id",
                 table: "components",
                 column: "component_type_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_technician_inventories_TechnicianId",
+                table: "technician_inventories",
+                column: "TechnicianId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -152,16 +146,13 @@ namespace Hampcoders.Electrolink.API.Migrations
                 name: "component_stocks");
 
             migrationBuilder.DropTable(
-                name: "property_photos");
+                name: "properties");
 
             migrationBuilder.DropTable(
                 name: "components");
 
             migrationBuilder.DropTable(
                 name: "technician_inventories");
-
-            migrationBuilder.DropTable(
-                name: "properties");
 
             migrationBuilder.DropTable(
                 name: "component_types");

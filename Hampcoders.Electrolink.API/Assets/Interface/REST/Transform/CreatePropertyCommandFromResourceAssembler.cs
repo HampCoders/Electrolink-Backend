@@ -10,7 +10,15 @@ public static class CreatePropertyCommandFromResourceAssembler
     public static CreatePropertyCommand ToCommandFromResource(CreatePropertyResource resource)
     {
         // Ahora la creación coincide con la definición del record Address
-        var address = new Address(resource.Address.Street, resource.Address.Number, resource.Address.City, resource.Address.PostalCode, resource.Address.Country);
+        var address = new Address(
+            resource.Address.Street, 
+            resource.Address.Number, 
+            resource.Address.City, 
+            resource.Address.PostalCode, 
+            resource.Address.Country,
+            resource.Address.Latitude,
+            resource.Address.Longitude
+        );
         var region = new Region(resource.RegionName, "PE-LMA");
         var district = new District(resource.DistrictName, "150101");
 

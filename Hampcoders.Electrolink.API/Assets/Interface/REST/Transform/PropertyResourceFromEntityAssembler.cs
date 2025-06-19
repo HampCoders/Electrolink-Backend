@@ -17,7 +17,7 @@ public static class PropertyResourceFromEntityAssembler
             entity.Region.Name,
             entity.District.Name,
             entity.Status.ToString(),
-            entity.Photos.Count
-        );
+            entity.Photo?.PhotoURL
+            );
     }
 }
