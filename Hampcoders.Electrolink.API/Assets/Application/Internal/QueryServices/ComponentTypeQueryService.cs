@@ -1,5 +1,6 @@
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Queries;
+using Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects;
 using Hampcoders.Electrolink.API.Assets.Domain.Repositories;
 using Hampcoders.Electrolink.API.Assets.Domain.Services;
 
@@ -9,7 +10,8 @@ public class ComponentTypeQueryService(IComponentTypeRepository componentTypeRep
 {
     public async Task<ComponentType?> Handle(GetComponentTypeByIdQuery query)
     {
-        return await componentTypeRepository.FindByIdAsync(query.Id);
+        var componentTypeId = new ComponentTypeId(query.Id);
+        return await componentTypeRepository.FindByIdAsync(componentTypeId);
     }
 
     public async Task<IEnumerable<ComponentType>> Handle(GetAllComponentTypesQuery query)

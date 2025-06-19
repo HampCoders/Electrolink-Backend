@@ -7,5 +7,5 @@ public record PropertyResource(
     string Region,
     string District,
     string Status,
-    int PhotoCount
+    string? PhotoUrl 
 );

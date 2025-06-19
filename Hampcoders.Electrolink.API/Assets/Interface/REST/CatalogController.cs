@@ -1,19 +1,44 @@
+using Hampcoders.Electrolink.API.Assets.Domain.Model.Commands;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Queries;
 using Hampcoders.Electrolink.API.Assets.Domain.Services;
 using Hampcoders.Electrolink.API.Assets.Interface.REST.Resources;
 using Hampcoders.Electrolink.API.Assets.Interface.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Hampcoders.Electrolink.API.Assets.Interface.REST;
 
+/// <summary>
+/// Controller for managing component types and components catalog.
+/// </summary>
+/// <param name="componentTypeCommandService">
+/// Command service for component types.
+/// </param>
+/// <param name="componentCommandService">
+/// Command service for components.
+/// </param>
 [ApiController]
 [Route("api/v1/[controller]")]
+[SwaggerTag("Catalog Endpoints")]
 public class CatalogController(
     IComponentTypeCommandService componentTypeCommandService, 
     IComponentCommandService componentCommandService) : ControllerBase
 {
-    // --- Endpoints para ComponentType ---
+    /// <summary>
+    /// Creates a new component type.
+    /// </summary>
+    /// <param name="resource">The resource containing the details of the component type to create.</param>
+    /// <returns>
+    /// <see cref="IActionResult"/> with the created component type resource and 201 status, or 400 if creation failed.
+    /// </returns>
     [HttpPost("types")]
+    [SwaggerOperation(
+        Summary = "Create Component Type",
+        Description = "Creates a new component type.",
+        OperationId = "CreateComponentType"
+    )]
+    [SwaggerResponse(StatusCodes.Status201Created, "Component type created", typeof(ComponentTypeResource))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Component type could not be created")]
     public async Task<IActionResult> CreateComponentType([FromBody] CreateComponentTypeResource resource)
     {
         var createComponentTypeCommand = CreateComponentTypeCommandFromResourceAssembler.ToCommandFromResource(resource);
@@ -21,11 +46,26 @@ public class CatalogController(
         if (componentType is null) return BadRequest();
 
         var resourceResponse = ComponentTypeResourceFromEntityAssembler.ToResourceFromEntity(componentType);
-        return CreatedAtAction(nameof(GetCTById), new { typeId = resourceResponse.Id }, resourceResponse);
+        return CreatedAtAction(nameof(GetCtById), new { typeId = resourceResponse.Id }, resourceResponse);
     }
 
-    [HttpGet("types/{typeId:int}", Name = nameof(GetCTById))] // Añadimos un nombre para la ruta
-    public async Task<IActionResult> GetCTById(int typeId, [FromServices] IComponentTypeQueryService queryService)
+    /// <summary>
+    /// Gets a component type by its unique identifier.
+    /// </summary>
+    /// <param name="typeId">The unique identifier of the component type.</param>
+    /// <param name="queryService">The query service for component types.</param>
+    /// <returns>
+    /// <see cref="IActionResult"/> with the component type resource if found, or 404 if not found.
+    /// </returns>
+    [HttpGet("types/{typeId:int}", Name = nameof(GetCtById))]
+    [SwaggerOperation(
+        Summary = "Get Component Type by Id",
+        Description = "Retrieves a component type by its unique identifier.",
+        OperationId = "GetComponentTypeById"
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Component type found", typeof(ComponentTypeResource))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Component type not found")]
+    public async Task<IActionResult> GetCtById(int typeId, [FromServices] IComponentTypeQueryService queryService)
     {
         var query = new GetComponentTypeByIdQuery(typeId);
         var componentType = await queryService.Handle(query);
@@ -34,16 +74,142 @@ public class CatalogController(
         var resource = ComponentTypeResourceFromEntityAssembler.ToResourceFromEntity(componentType);
         return Ok(resource);
     }
-    // --- Endpoints para Component ---
+
+    /// <summary>
+    /// Creates a new component.
+    /// </summary>
+    /// <param name="resource">The resource containing the details of the component to create.</param>
+    /// <returns>
+    /// <see cref="IActionResult"/> with the created component resource and 200 status, or 400 if creation failed.
+    /// </returns>
     [HttpPost("components")]
+    [SwaggerOperation(
+        Summary = "Create Component",
+        Description = "Creates a new component.",
+        OperationId = "CreateComponent"
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Component created", typeof(ComponentResource))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Component could not be created")]
     public async Task<IActionResult> CreateComponent([FromBody] CreateComponentResource resource)
     {
         var createComponentCommand = CreateComponentCommandFromResourceAssembler.ToCommandFromResource(resource);
         var component = await componentCommandService.Handle(createComponentCommand);
         if (component is null) return BadRequest();
 
-        // Aquí necesitarías un ComponentResourceFromEntityAssembler
-        // ...
-        return Ok(component); // Simplificado por ahora
+
+        var componentResource = ComponentResourceFromEntityAssembler.ToResourceFromEntity(component);
+
+        return Ok(componentResource); 
     }
+    
+    /// <summary>
+    /// Updates an existing component type.
+    /// </summary>
+    /// <param name="typeId">The unique identifier of the component type.</param>
+    /// <param name="resource">The resource containing the updated details.</param>
+    /// <returns>
+    /// <see cref="IActionResult"/> with the updated component type resource, or 404 if not found.
+    /// </returns>
+    [HttpPut("types/{typeId:int}")]
+    [SwaggerOperation(
+        Summary = "Update Component Type",
+        Description = "Updates an existing component type.",
+        OperationId = "UpdateComponentType"
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Component type updated", typeof(ComponentTypeResource))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Component type not found")]
+    public async Task<IActionResult> UpdateComponentType(int typeId, [FromBody] UpdateComponentTypeResource resource)
+    {
+        var updateCommand = new UpdateComponentTypeCommand(typeId, resource.Name, resource.Description);
+    
+        var componentType = await componentTypeCommandService.Handle(updateCommand);
+        if (componentType is null) 
+            return NotFound("Component Type not found");
+    
+        var responseResource = ComponentTypeResourceFromEntityAssembler.ToResourceFromEntity(componentType);
+        return Ok(responseResource);
+    }
+    
+    /// <summary>
+    /// Deletes a component type by its unique identifier.
+    /// </summary>
+    /// <param name="typeId">The unique identifier of the component type.</param>
+    /// <returns>
+    /// <see cref="IActionResult"/> with 204 status if deleted, or 404 if not found.
+    /// </returns>
+    [HttpDelete("types/{typeId:int}")]
+    [SwaggerOperation(
+        Summary = "Delete Component Type",
+        Description = "Deletes a component type by its unique identifier.",
+        OperationId = "DeleteComponentType"
+    )]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Component type deleted")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Component type not found")]
+    public async Task<IActionResult> DeleteComponentType(int typeId)
+    {
+        var deleteCommand = new DeleteComponentTypeCommand(typeId);
+    
+        var result = await componentTypeCommandService.Handle(deleteCommand);
+    
+        if (!result) 
+            return NotFound("Component Type not found");
+        
+        return NoContent();
+    }
+    
+    /// <summary>
+    /// Deletes a component by its unique identifier.
+    /// </summary>
+    /// <param name="componentId">The unique identifier of the component.</param>
+    /// <returns>
+    /// <see cref="IActionResult"/> with 204 status if deleted, or 404 if not found.
+    /// </returns>
+    [HttpDelete("components/{componentId:guid}")]
+    [SwaggerOperation(
+        Summary = "Delete Component",
+        Description = "Deletes a component by its unique identifier.",
+        OperationId = "DeleteComponent"
+    )]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "Component deleted")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Component not found")]
+    public async Task<IActionResult> DeleteComponent(Guid componentId)
+    {
+        var deleteCommand = new DeleteComponentCommand(componentId);
+
+        var result = await componentCommandService.Handle(deleteCommand);
+
+        if (!result)
+            return NotFound("Component not found");
+
+        return NoContent();
+    }
+    
+    /// <summary>
+    /// Updates an existing component.
+    /// </summary>
+    /// <param name="componentId">The unique identifier of the component.</param>
+    /// <param name="resource">The resource containing the updated details.</param>
+    /// <returns>
+    /// <see cref="IActionResult"/> with the updated component resource, or 404 if not found.
+    /// </returns>
+    [HttpPut("components/{componentId:guid}")]
+    [SwaggerOperation(
+        Summary = "Update Component",
+        Description = "Updates an existing component.",
+        OperationId = "UpdateComponent"
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Component updated", typeof(ComponentResource))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Component not found")]
+    public async Task<IActionResult> UpdateComponent(Guid componentId, [FromBody] UpdateComponentResource resource)
+    {
+        var updateCommand = UpdateComponentCommandFromResourceAssembler.ToCommandFromResource(resource,componentId);
+
+        var component = await componentCommandService.Handle(updateCommand);
+        if (component is null)
+            return NotFound("Component not found");
+
+        var responseResource = ComponentResourceFromEntityAssembler.ToResourceFromEntity(component);
+        return Ok(responseResource);
+    }
+    
 }
