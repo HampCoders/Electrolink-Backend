@@ -9,5 +9,6 @@ public interface ITechnicianInventoryRepository : IBaseRepository<TechnicianInve
 {
     Task<TechnicianInventory?> FindByTechnicianIdAsync(TechnicianId technicianId);
     Task AddComponentStockAsync(ComponentStock stockItem);
-
+    Task<bool> UpdateComponentStockAsync(Guid stockItemId, int newQuantity, int? newAlertThreshold);
+    Task<bool> RemoveComponentStockAsync(Guid technicianId, Guid componentId);
 }

@@ -30,11 +30,8 @@ public class ComponentRepository(AppDbContext context) : BaseRepository<Componen
     public async Task<IEnumerable<Component>> FindByIdsAsync(IEnumerable<ComponentId> ids)
     {
         // Convertimos la lista de Value Objects a una lista de Guids primitivos
-        var idValues = ids.Select(id => id.Id).ToList();
-
-        // Usamos .Contains() para buscar todos los componentes cuyos IDs estén en la lista
         return await Context.Set<Component>()
-            .Where(c => idValues.Contains(c.Id.Id))
+            .Where(c => ids.Contains(c.Id)) // <-- Compara ComponentId con una lista de ComponentId.
             .ToListAsync();
     }
 }

@@ -87,7 +87,7 @@ public static class ModelBuilderExtensions
             b.HasIndex(i => i.TechnicianId).IsUnique();
     
             b.HasMany(i => i.StockItems)
-                .WithOne()
+                .WithOne(s => s.TechnicianInventory)
                 .HasForeignKey(cs => cs.TechnicianInventoryId)
                 .IsRequired();
         });
@@ -97,19 +97,34 @@ public static class ModelBuilderExtensions
             b.ToTable("component_stocks");
             b.HasKey(cs => cs.Id);
 
-            b.HasIndex(cs => new { cs.TechnicianInventoryId, cs.ComponentId }).IsUnique();
+            // --- NO MÁS `OwnsOne` PARA `ComponentId` ---
 
-            b.HasOne<Component>()
-                .WithMany()
-                .HasForeignKey(cs => cs.ComponentId)
+            // 1. ENSEÑA A EF CORE CÓMO MANEJAR EL VALUE OBJECT `ComponentId`
+            // Le decimos que la propiedad `ComponentId` se convierte a/desde un `int` (o el tipo que sea tu Id)
+            // para ser almacenada en la base de datos.
+            b.Property(cs => cs.ComponentId)
+                .HasConversion(id => id.Id, value => new ComponentId(value))
+                .HasColumnName("component_id") // Es buena práctica nombrar la columna explícitamente.
                 .IsRequired();
 
+            // 2. CREA EL ÍNDICE COMPUESTO USANDO EXPRESIONES LAMBDA
+            // Ahora que EF Core entiende `ComponentId` como una propiedad simple (convertible),
+            // esta expresión lambda SÍ FUNCIONA y es totalmente segura a nivel de tipos.
+            b.HasIndex(cs => new { cs.TechnicianInventoryId, cs.ComponentId }).IsUnique();
+    
+            // 3. DEFINE LA RELACIÓN CON `Component`
+            // La clave foránea es la propiedad `ComponentId` que ya hemos configurado.
+            b.HasOne<Component>()
+                .WithMany()
+                .HasForeignKey(cs => cs.ComponentId) // Usamos la lambda, que es más seguro.
+                .IsRequired();
+
+            // El resto de tus propiedades (ya estaban bien)
             b.Property(cs => cs.TechnicianInventoryId).IsRequired();
-            b.Property(cs => cs.ComponentId).HasConversion(id => id.Id, value => new ComponentId(value));
             b.Property(cs => cs.QuantityAvailable).IsRequired();
             b.Property(cs => cs.AlertThreshold).IsRequired();
             b.Property(cs => cs.LastUpdated).IsRequired();
-        });
+        }); 
         // NOTA: No hay ningún builder.Entity<PropertyPhoto>() aquí. Fue eliminado.
     }
 }
