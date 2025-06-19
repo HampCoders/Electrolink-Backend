@@ -1,0 +1,42 @@
+using Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
+using Hampcoders.Electrolink.API.Assets.Domain.Model.Commands;
+using Hampcoders.Electrolink.API.Assets.Domain.Repositories;
+using Hampcoders.Electrolink.API.Assets.Domain.Services;
+using Hampcoders.Electrolink.API.Shared.Domain.Repositories;
+
+namespace Hampcoders.Electrolink.API.Assets.Application.Internal.CommandServices;
+
+public class ComponentCommandService(IComponentRepository componentRepository, IComponentTypeRepository componentTypeRepository, IUnitOfWork unitOfWork) : IComponentCommandService
+{
+    public async Task<Component?> Handle(CreateComponentCommand command)
+    {
+        var componentType = await componentTypeRepository.FindByIdAsync(command.ComponentTypeId);
+        if (componentType is null)
+            throw new ArgumentException($"Component type with id {command.ComponentTypeId} not found.");
+
+        var component = new Component(command);
+        await componentRepository.AddAsync(component);
+        await unitOfWork.CompleteAsync();
+        return component;
+    }
+
+    public async Task<Component?> Handle(UpdateComponentInfoCommand command)
+    {
+        var component = await componentRepository.FindByIdAsync(new (command.Id));
+        if (component is null) throw new ArgumentException("Component not found.");
+
+        component.UpdateInfo(command);
+        await unitOfWork.CompleteAsync();
+        return component;
+    }
+
+    public async Task<Component?> Handle(DeactivateComponentCommand command)
+    {
+        var component = await componentRepository.FindByIdAsync(new (command.Id));
+        if (component is null) throw new ArgumentException("Component not found.");
+
+        component.Deactivate();
+        await unitOfWork.CompleteAsync();
+        return component;
+    }
+}

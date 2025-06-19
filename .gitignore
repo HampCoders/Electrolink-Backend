@@ -1,0 +1,9 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+.idea/
+.idea.Hampcoders.Electrolink.API/
+/.idea
+Hampcoders.Electrolink.API/appsettings.Development.json
