@@ -43,14 +43,13 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1",
         new OpenApiInfo
         {
-            Title = "ACME.LearningCenterPlatform.API",
+            Title = "Hampcoders.ElectrolinkPlatform.API",
             Version = "v1",
-            Description = "ACME Learning Center Platform API",
-            TermsOfService = new Uri("https://acme-learning.com/tos"),
+            Description = "Hampcoders Electrolink Platform API",
             Contact = new OpenApiContact
             {
-                Name = "ACME Studios",
-                Email = "contact@acme.com"
+                Name = "Hampcoders",
+                Email = "contact@hampcoders.com"
             },
             License = new OpenApiLicense
             {
@@ -59,6 +58,11 @@ builder.Services.AddSwaggerGen(options =>
             },
         });
     options.EnableAnnotations();
+    options.AddServer(new OpenApiServer
+    {
+        Url = "http://localhost:5055", // La URL donde corre tu API (vista en tus logs)
+        Description = "Development Server"
+    });
 });
 
 // Add CORS Policy

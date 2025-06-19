@@ -12,7 +12,7 @@ public class PropertyRepository(AppDbContext context) : BaseRepository<Property>
     public async Task<IEnumerable<Property>> FindByOwnerIdAsync(OwnerId ownerId)
     {
         return await Context.Set<Property>()
-            .Include(p => p.Photos) 
+            .Include(p => p.Photo) 
             .Where(p => p.OwnerId == ownerId)
             .ToListAsync();
     }
@@ -20,7 +20,7 @@ public class PropertyRepository(AppDbContext context) : BaseRepository<Property>
     public async Task<Property?> FindByIdAsync(PropertyId id)
     {
         return await Context.Set<Property>()
-            .Include(p => p.Photos)
+            .Include(p => p.Photo)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 }
