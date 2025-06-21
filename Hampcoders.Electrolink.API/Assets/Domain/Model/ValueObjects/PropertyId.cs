@@ -6,11 +6,11 @@ public record PropertyId
 
     public PropertyId(Guid value)
     {
-        // AÑADIDO: Validación para prevenir un estado inválido.
         if (value == Guid.Empty)
         {
             throw new ArgumentException("Property ID cannot be empty.", nameof(value));
         }
+
         Id = value;
     }
 

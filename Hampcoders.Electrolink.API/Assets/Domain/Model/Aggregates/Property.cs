@@ -12,7 +12,7 @@ public partial class Property
     public Address Address { get; private set; }
     public Region Region { get; private set; }
     public District District { get; private set; }
-    
+
     public Property(OwnerId ownerId, Address address, Region region, District district) : this()
     {
         OwnerId = ownerId;
@@ -31,5 +31,4 @@ public partial class Property
         Status = EPropertyStatus.Active;
         Photo = null;
     }
-    
 }
