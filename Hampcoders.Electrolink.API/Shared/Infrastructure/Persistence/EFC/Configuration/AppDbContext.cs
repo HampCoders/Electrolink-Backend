@@ -2,6 +2,9 @@ using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Configura
 
 
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
+using Hampcoders.Electrolink.API.Analytics.Domain.Model.Aggregates;
+using Hampcoders.Electrolink.API.Analytics.Domain.Model.Entities;
+using Hampcoders.Electrolink.API.Analytics.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Entities;
 using Hampcoders.Electrolink.API.Assets.Infrastructure.Persistence.EFC.Configuration.Extensions;
@@ -19,6 +22,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Component> Components { get; set; }
     public DbSet<ComponentType> ComponentTypes { get; set; }
     public DbSet<ComponentStock> ComponentStocks { get; set; }
+    
+    public DbSet<Technician> Technicians { get; set; }
+    
+    
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
         // Add the created and updated interceptor
@@ -31,6 +38,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         base.OnModelCreating(builder);
 
         builder.ApplyAssetsConfiguration();
+        builder.ApplyAnalitycsConfiguration();
         //builder.UseSnakeCaseNamingConvention();
     }
 }

@@ -40,10 +40,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Analytics\Application\" />
-      <Folder Include="Analytics\Domain\" />
-      <Folder Include="Analytics\Infrastructure\" />
-      <Folder Include="Analytics\Interface\" />
       <Folder Include="IAM\Application\" />
       <Folder Include="IAM\Domain\" />
       <Folder Include="IAM\Infrastructure\" />

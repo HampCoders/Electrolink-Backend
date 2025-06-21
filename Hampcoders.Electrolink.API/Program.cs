@@ -1,3 +1,8 @@
+using Hampcoders.Electrolink.API.Analytics.Application.Internal.CommandServices;
+using Hampcoders.Electrolink.API.Analytics.Application.Internal.QueryServices;
+using Hampcoders.Electrolink.API.Analytics.Domain.Repositories;
+using Hampcoders.Electrolink.API.Analytics.Domain.Services;
+using Hampcoders.Electrolink.API.Analytics.Infrastructure.Persistence.EFC.Repositories;
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Repositories;
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Interfaces.ASP.Configuration;
@@ -97,6 +102,15 @@ builder.Services.AddScoped<IComponentTypeQueryService, ComponentTypeQueryService
 
 // Shared Bounded Context
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Analitycs Bounded Context -
+builder.Services.AddScoped<ITechnicianRepository, TechnicianRepository>();
+builder.Services.AddScoped<IWorkRepository, WorkRepository>();
+builder.Services.AddScoped<ITechnicianCommandService, TechnicianCommandService>();
+builder.Services.AddScoped<IWorkCommandService, WorkCommandService>();
+builder.Services.AddScoped<ITechnicianQueryService, TechnicianQueryService>();
+builder.Services.AddScoped<IWorkQueryService, WorkQueryService>();
+
 
 var app = builder.Build();
 
