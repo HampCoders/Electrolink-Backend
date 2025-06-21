@@ -14,6 +14,12 @@ using Hampcoders.Electrolink.API.Assets.Application.Internal.CommandServices;
 using Hampcoders.Electrolink.API.Assets.Application.Internal.QueryServices;
 using Hampcoders.Electrolink.API.Assets.Infrastructure.Persistence.EFC.Repositories;
 
+using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Application.Internal.CommandServices;
+using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Application.Internal.QueryServices;
+using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Repositories;
+using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Services;
+using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Infrastructure.Persistence.EFC.Repositories;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -112,7 +118,19 @@ builder.Services.AddScoped<IPropertyQueryService, PropertyQueryService>();
 builder.Services.AddScoped<ITechnicianInventoryQueryService, TechnicianInventoryQueryService>();
 builder.Services.AddScoped<IComponentQueryService, ComponentQueryService>();
 builder.Services.AddScoped<IComponentTypeQueryService, ComponentTypeQueryService>();
+// -------------------
+// SDP Bounded Context
+// -------------------
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 
+builder.Services.AddScoped<IServiceCommandService, ServiceCommandService>();
+builder.Services.AddScoped<IServiceQueryService, ServiceQueryService>();
+builder.Services.AddScoped<IRequestCommandService, RequestCommandService>();
+builder.Services.AddScoped<IRequestQueryService, RequestQueryService>();
+builder.Services.AddScoped<IScheduleCommandService, ScheduleCommandService>();
+builder.Services.AddScoped<IScheduleQueryService, ScheduleQueryService>();
 // Shared Bounded Context
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
