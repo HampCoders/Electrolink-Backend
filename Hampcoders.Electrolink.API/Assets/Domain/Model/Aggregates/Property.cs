@@ -29,7 +29,7 @@ public partial class Property
         Region = command.Region;
         District = command.District;
         Status = EPropertyStatus.Active;
-        _photos = new List<PropertyPhoto>();
+        Photo = null;
     }
     
 }

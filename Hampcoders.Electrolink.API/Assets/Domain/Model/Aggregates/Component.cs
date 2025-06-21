@@ -21,7 +21,7 @@ public class Component
         IsActive = true;
     }
 
-    public void UpdateInfo(UpdateComponentInfoCommand command)
+    public void UpdateInfo(UpdateComponentCommand command)
     {
         Name = command.Name;
         Description = command.Description;
