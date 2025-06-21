@@ -13,7 +13,7 @@ public static class CreateRequestCommandFromResourceAssembler
             r.TechnicianId,
             r.PropertyId,
             r.ServiceId,
-            "Pending",                  // o r.Status si lo incluyes en el resource
+            "Pending",                  
             r.ScheduledDate,
             r.ProblemDescription,
             new ElectricBill(
