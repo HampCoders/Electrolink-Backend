@@ -44,7 +44,7 @@ public class SchedulesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateScheduleResource resource)
     {
         var cmd = CreateScheduleCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var sched = await _cmd.CreateAsync(cmd); // if you renamed accordingly
+        var sched = await _cmd.CreateAsync(cmd); 
         if (sched is null) return BadRequest("Schedule creation failed");
         var res = ScheduleResourceFromEntityAssembler.ToResourceFromEntity(sched);
         return CreatedAtAction(nameof(GetByTechnician), new { technicianId = res.TechnicianId }, res);

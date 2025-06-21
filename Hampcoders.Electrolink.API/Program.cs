@@ -71,7 +71,7 @@ builder.Services.AddSwaggerGen(options =>
     options.EnableAnnotations();
     options.AddServer(new OpenApiServer
     {
-        Url = "http://localhost:5055", // La URL donde corre tu API (vista en tus logs)
+        Url = "http://localhost:5055", 
         Description = "Development Server"
     });
 });
@@ -118,9 +118,7 @@ builder.Services.AddScoped<IPropertyQueryService, PropertyQueryService>();
 builder.Services.AddScoped<ITechnicianInventoryQueryService, TechnicianInventoryQueryService>();
 builder.Services.AddScoped<IComponentQueryService, ComponentQueryService>();
 builder.Services.AddScoped<IComponentTypeQueryService, ComponentTypeQueryService>();
-// -------------------
 // SDP Bounded Context
-// -------------------
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
