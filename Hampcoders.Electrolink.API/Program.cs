@@ -1,3 +1,8 @@
+using Hamcoders.Electrolink.API.Monitoring.Application.Internal.CommandServices;
+using Hamcoders.Electrolink.API.Monitoring.Application.Internal.QueryServices;
+using Hamcoders.Electrolink.API.Monitoring.Domain.Repository;
+using Hamcoders.Electrolink.API.Monitoring.Domain.Services;
+using Hamcoders.Electrolink.API.Monitoring.Infrastructure.Persistence.EfCore;
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Repositories;
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Interfaces.ASP.Configuration;
@@ -74,6 +79,19 @@ builder.Services.AddCors(options =>
 });
 
 // Dependency Injection
+// Dependency Injection
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IServiceOperationRepository, ServiceOperationRepository>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+// Domain services for Monitoring
+builder.Services.AddScoped<IServiceOperationCommandService, ServiceOperationCommandService>();
+builder.Services.AddScoped<IServiceOperationQueryService, ServiceOperationQueryService>();
+builder.Services.AddScoped<IReportCommandService, ReportCommandService>();
+builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
+builder.Services.AddScoped<IRatingCommandService, RatingCommandService>();
+builder.Services.AddScoped<IRatingQueryService, RatingQueryService>();
+
 // Shared Bounded Context
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
