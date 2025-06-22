@@ -7,6 +7,6 @@ public static class ComponentTypeResourceFromEntityAssembler
 {
     public static ComponentTypeResource ToResourceFromEntity(ComponentType entity)
     {
-        return new ComponentTypeResource(entity.Id.Id, entity.Name);
+        return new ComponentTypeResource(entity.Id.Id, entity.Name, entity.Description);
     }
 }

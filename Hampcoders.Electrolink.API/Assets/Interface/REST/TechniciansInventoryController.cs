@@ -23,7 +23,7 @@ namespace Hampcoders.Electrolink.API.Assets.Interface.REST;
 /// Query service for components.
 /// </param>
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/technicians")]
 [SwaggerTag("Technician Inventory Endpoints")]
 public class TechniciansInventoryController(
     ITechnicianInventoryCommandService inventoryCommandService,
@@ -88,7 +88,7 @@ public class TechniciansInventoryController(
     /// <returns>
     /// <see cref="IActionResult"/> with the updated inventory or 404 if not found.
     /// </returns>
-    [HttpPut("{technicianId}/inventory/{componentId}")]
+    [HttpPut("{technicianId:guid}/inventory/{componentId:guid}")]
     [SwaggerOperation(
         Summary = "Update component stock in technician inventory",
         Description = "Updates the stock quantity of a component in a technician's inventory.",
@@ -128,7 +128,7 @@ public class TechniciansInventoryController(
     /// <returns>
     /// <see cref="IActionResult"/> with status 204 if removed, or 404 if not found.
     /// </returns>
-    [HttpDelete("{technicianId}/inventory/{componentId}")]
+    [HttpDelete("{technicianId:guid}/inventory/{componentId:guid}")]
     [SwaggerOperation(
         Summary = "Remove component from technician inventory",
         Description = "Removes a component from a technician's inventory.",

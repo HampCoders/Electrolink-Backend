@@ -38,11 +38,11 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
+        
+        builder.UseSnakeCaseNamingConvention();
         builder.ApplyAssetsConfiguration();
         builder.ApplyMonitoringConfiguration();
         builder.ApplyServiceDesignAndPlanningConfiguration();
-        builder.UseSnakeCaseNamingConvention();
     }
     
     

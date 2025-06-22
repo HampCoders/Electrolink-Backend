@@ -9,28 +9,32 @@ namespace Hampcoders.Electrolink.API.Assets.Application.Internal.QueryServices;
 public class PropertyQueryService(IPropertyRepository propertyRepository) : IPropertyQueryService
 {
     /// <summary>
-    /// Maneja el query para obtener una propiedad por su ID.
+    /// Maneja la consulta para obtener una propiedad específica por su ID,
+    /// asegurando que pertenezca al propietario correcto.
     /// </summary>
     public async Task<Property?> Handle(GetPropertyByIdQuery query)
     {
-        // Llama al método personalizado del repositorio que acepta el Value Object.
-        return await propertyRepository.FindByIdAsync(new PropertyId(query.PropertyId));
+        // Esta línea ahora funcionará porque el 'using' le dice al compilador
+        // dónde encontrar 'PropertyId' y 'OwnerId'.
+        return await propertyRepository.FindByIdAndOwnerIdAsync(
+            new PropertyId(query.PropertyId),
+            new OwnerId(query.OwnerId)
+        );
     }
 
     /// <summary>
-    /// Maneja el query para obtener todas las propiedades de un propietario.
-    /// Corresponde directamente a la tarea técnica TS-02.
+    /// Maneja la consulta para obtener todas las propiedades de un propietario,
+    /// aplicando los filtros opcionales de búsqueda.
     /// </summary>
     public async Task<IEnumerable<Property>> Handle(GetAllPropertiesByOwnerIdQuery query)
     {
-        return await propertyRepository.FindByOwnerIdAsync(new OwnerId(Guid.Parse(query.OwnerId)));
-    }
-
-    /// <summary>
-    /// Maneja el query para obtener todas las propiedades del sistema.
-    /// </summary>
-    public async Task<IEnumerable<Property>> Handle(GetAllPropertiesQuery query)
-    {
-        return await propertyRepository.ListAsync();
+        // Llama al método de búsqueda flexible y unificado del repositorio.
+        return await propertyRepository.GetAllFilteredAsync(
+            new OwnerId(query.OwnerId),
+            query.City,
+            query.District,
+            query.Region,
+            query.Street
+        );
     }
 }

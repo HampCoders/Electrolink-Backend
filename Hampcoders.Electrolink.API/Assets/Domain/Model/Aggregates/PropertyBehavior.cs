@@ -59,4 +59,23 @@ public partial class Property
         if (command.Id == Id.Id)
             Deactivate();
     }
+    
+    public void Handle(UpdatePropertyCommand command)
+    {
+        if (command.Id != Id.Id) return;
+
+        // Verificar que la propiedad esté activa
+        if (Status == EPropertyStatus.Inactive)
+            throw new InvalidOperationException("No se puede actualizar una propiedad inactiva.");
+
+        // Convertir Guid a OwnerId
+        OwnerId = new OwnerId(command.OwnerId);
+
+        // Asignar la dirección
+        Address = command.Address;
+
+        // Crear objetos Region y District con los 2 parámetros requeridos
+        Region = new Region(command.RegionName, command.RegionCode);
+        District = new District(command.DistrictName, command.DistrictUbigeo);
+    }
 }

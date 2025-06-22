@@ -43,6 +43,7 @@ public static class ModelBuilderExtensions
 
             b.OwnsOne(p => p.Address, address =>
             {
+                address.WithOwner().HasForeignKey("Id");
                 address.Property(a => a.Street).HasColumnName("address_street").IsRequired().HasMaxLength(120);
                 address.Property(a => a.Number).HasColumnName("address_number").HasMaxLength(20);
                 address.Property(a => a.City).HasColumnName("address_city").IsRequired().HasMaxLength(50);
@@ -52,12 +53,14 @@ public static class ModelBuilderExtensions
             
             b.OwnsOne(p => p.Region, region =>
             {
+                region.WithOwner().HasForeignKey("Id");
                 region.Property(r => r.Name).HasColumnName("region_name").IsRequired().HasMaxLength(50);
                 region.Property(r => r.Code).HasColumnName("region_code").HasMaxLength(10);
             });
             
             b.OwnsOne(p => p.District, district =>
             {
+                district.WithOwner().HasForeignKey("Id");
                district.Property(d => d.Name).HasColumnName("district_name").IsRequired().HasMaxLength(50);
                district.Property(d => d.Ubigeo).HasColumnName("district_ubigeo").HasMaxLength(10);
             });
@@ -66,12 +69,11 @@ public static class ModelBuilderExtensions
             // Se configura la colección de Photos como un tipo poseído (Owned Type).
             b.OwnsOne(p => p.Photo, photoBuilder =>
             {
-                // Mapeamos la propiedad del Value Object a una columna en la tabla 'properties'.
-                // Como la propiedad 'Photo' puede ser nula, la columna también debe serlo.
-                photoBuilder.Property(photo => photo.PhotoURL)
-                    .HasColumnName("photo_url") // Nombre de la columna
-                    .HasMaxLength(500)
-                    .IsRequired(false); // Se permite que sea nulo
+                // Mapeamos la propiedad 'PhotoUrl' del record 'PropertyPhoto' a una columna.
+                // Usamos nameof para evitar errores de tipeo. Es sensible a mayúsculas/minúsculas.
+                photoBuilder.Property(photo => photo.PhotoUrl)
+                    .HasColumnName("photo_url") // Nombre de la columna en la BD.
+                    .HasMaxLength(500);         // Longitud máxima.
             });
         });
         

@@ -103,6 +103,30 @@ public class CatalogController(
     }
     
     /// <summary>
+    /// Obtiene una lista de todos los tipos de componentes.
+    /// </summary>
+    /// <param name="queryService">El servicio de consulta para tipos de componentes.</param>
+    /// <returns>
+    /// <see cref="IActionResult"/> con una lista de recursos de tipos de componentes.
+    /// </returns>
+    [HttpGet("types")]
+    [SwaggerOperation(
+        Summary = "Obtener todos los tipos de componentes",
+        Description = "Recupera una lista de todos los tipos de componentes disponibles.",
+        OperationId = "GetAllComponentTypes"
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Lista de tipos de componentes recuperada", typeof(IEnumerable<ComponentTypeResource>))]
+    public async Task<IActionResult> GetAllComponentTypes([FromServices] IComponentTypeQueryService queryService)
+    {
+        var getAllComponentTypesQuery = new GetAllComponentTypesQuery();
+        var componentTypes = await queryService.Handle(getAllComponentTypesQuery);
+
+        var resources = componentTypes.Select(ComponentTypeResourceFromEntityAssembler.ToResourceFromEntity);
+
+        return Ok(resources);
+    }
+    
+    /// <summary>
     /// Updates an existing component type.
     /// </summary>
     /// <param name="typeId">The unique identifier of the component type.</param>
@@ -210,6 +234,33 @@ public class CatalogController(
 
         var responseResource = ComponentResourceFromEntityAssembler.ToResourceFromEntity(component);
         return Ok(responseResource);
+    }
+    
+    /// <summary>
+    /// Gets a list of all components.
+    /// </summary>
+    /// <param name="queryService">The query service for components.</param>
+    /// <returns>
+    /// <see cref="IActionResult"/> with a list of component resources.
+    /// </returns>
+    [HttpGet("components")] // <--- ¡EL ENDPOINT QUE FALTABA!
+    [SwaggerOperation(
+        Summary = "Get All Components",
+        Description = "Retrieves a list of all components available.",
+        OperationId = "GetAllComponents"
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "List of components retrieved", typeof(IEnumerable<ComponentResource>))]
+    public async Task<IActionResult> GetAllComponents([FromServices] IComponentQueryService queryService)
+    {
+        // 1. Crea y maneja la query para obtener todos los componentes.
+        var getAllComponentsQuery = new GetAllComponentsQuery();
+        var components = await queryService.Handle(getAllComponentsQuery);
+
+        // 2. Transforma las entidades del dominio a recursos de la API.
+        var resources = components.Select(ComponentResourceFromEntityAssembler.ToResourceFromEntity);
+        
+        // 3. Devuelve la lista de recursos con un estado 200 OK.
+        return Ok(resources);
     }
     
 }

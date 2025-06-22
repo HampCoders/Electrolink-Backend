@@ -1,6 +1,6 @@
 namespace Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects;
 
-public interface IPublishable
+public interface     IPublishable
 {
     void AddPhoto();
     void UpdateAddress();

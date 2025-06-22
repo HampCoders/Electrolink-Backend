@@ -6,10 +6,9 @@ namespace Hampcoders.Electrolink.API.Assets.Interface.REST.Transform;
 
 public static class CreatePropertyCommandFromResourceAssembler
 {
-    // Convierte el Resource de la API en un Command para el Dominio
-    public static CreatePropertyCommand ToCommandFromResource(CreatePropertyResource resource)
+    // MÉTODO CORREGIDO: ahora recibe el ownerId como un parámetro separado.
+    public static CreatePropertyCommand ToCommandFromResource(CreatePropertyResource resource, Guid ownerId)
     {
-        // Ahora la creación coincide con la definición del record Address
         var address = new Address(
             resource.Address.Street, 
             resource.Address.Number, 
@@ -19,9 +18,11 @@ public static class CreatePropertyCommandFromResourceAssembler
             resource.Address.Latitude,
             resource.Address.Longitude
         );
-        var region = new Region(resource.RegionName, "PE-LMA");
-        var district = new District(resource.DistrictName, "150101");
 
-        return new CreatePropertyCommand(new OwnerId(resource.OwnerId), address, region, district);
+        var region = new Region(resource.RegionName, resource.RegionCode);
+        var district = new District(resource.DistrictName, resource.DistrictUbigeo);
+
+        // CORREGIDO: Usamos el ownerId que viene del parámetro, no del resource.
+        return new CreatePropertyCommand(new OwnerId(ownerId), address, region, district);
     }
 }
