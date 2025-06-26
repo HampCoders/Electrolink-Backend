@@ -69,11 +69,12 @@ builder.Services.AddSwaggerGen(options =>
             },
         });
     options.EnableAnnotations();
+    /* Uncomment the following lines to add server information
     options.AddServer(new OpenApiServer
     {
         Url = "http://localhost:5055", 
         Description = "Development Server"
-    });
+    }); */
 });
 
 // Add CORS Policy
@@ -144,6 +145,7 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 /*if (app.Environment.IsDevelopment())
 {
+    // Uncomment the following lines to enable Swagger in development
     app.UseSwagger();
     app.UseSwaggerUI();
 }*/
@@ -153,6 +155,7 @@ app.UseSwaggerUI();
 
 app.UseCors("AllowAllPolicy");
 
+// Uncomment the following line to enable HTTPS redirection
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();
