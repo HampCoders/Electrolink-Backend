@@ -6,7 +6,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Hampcoders.Electrolink.API.csproj", "./"]
+COPY Hampcoders.Electrolink.API.csproj .
 RUN dotnet restore "Hampcoders.Electrolink.API.csproj"
 COPY . .
 WORKDIR "/src/"
