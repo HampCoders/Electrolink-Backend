@@ -26,8 +26,8 @@ public partial class Property
         Address = command.Address;
         Region = command.Region;
         District = command.District;
-        Status = EPropertyStatus.Active;
-        Photo = null;
+        //Status = EPropertyStatus.Active;
+        /*Photo = null;*/
     }
     
 }

@@ -13,7 +13,6 @@ public class PropertyRepository(AppDbContext context) : BaseRepository<Property>
     public async Task<IEnumerable<Property>> FindByOwnerIdAsync(OwnerId ownerId)
     {
         return await Context.Set<Property>()
-            .Include(p => p.Photo) 
             .Where(p => p.OwnerId == ownerId)
             .ToListAsync();
     }
@@ -21,7 +20,6 @@ public class PropertyRepository(AppDbContext context) : BaseRepository<Property>
     public async Task<Property?> FindByIdAsync(PropertyId id)
     {
         return await Context.Set<Property>()
-            .Include(p => p.Photo)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
     
@@ -58,7 +56,7 @@ public class PropertyRepository(AppDbContext context) : BaseRepository<Property>
             .ToListAsync();
     }
     
-    public async Task<Property?> Handle(DeactivatePropertyCommand command)
+    /*public async Task<Property?> Handle(DeactivatePropertyCommand command)
     {
         var property = await FindByIdAsync(new PropertyId(command.Id));
         if (property == null) return null;
@@ -66,7 +64,7 @@ public class PropertyRepository(AppDbContext context) : BaseRepository<Property>
         property.Handle(command);
         await Context.SaveChangesAsync();
         return property;
-    }
+    }*/
     
     public async Task<Property?> FindByIdAndOwnerIdAsync(PropertyId propertyId, OwnerId ownerId)
     {

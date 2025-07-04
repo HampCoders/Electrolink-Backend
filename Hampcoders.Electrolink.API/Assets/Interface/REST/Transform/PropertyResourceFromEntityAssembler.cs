@@ -12,12 +12,11 @@ public static class PropertyResourceFromEntityAssembler
 
         return new PropertyResource(
             entity.Id.Id,
-            entity.OwnerId.Id,
             fullAddress,
             entity.Region.Name,
-            entity.District.Name,
-            entity.Status.ToString(),
-            entity.Photo?.PhotoUrl
+            entity.District.Name
+            //entity.Status.ToString()
+            //entity.Photo?.PhotoUrl
             );
     }
 }

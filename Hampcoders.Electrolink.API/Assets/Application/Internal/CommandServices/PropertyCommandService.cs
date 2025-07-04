@@ -17,7 +17,7 @@ public class PropertyCommandService(IPropertyRepository propertyRepository, IUni
         return property;
     }
 
-    public async Task<Property?> Handle(AddPhotoToPropertyCommand command)
+    /*public async Task<Property?> Handle(AddPhotoToPropertyCommand command)
     {
         var property = await propertyRepository.FindByIdAsync(new PropertyId(command.Id));
         if (property is null) throw new ArgumentException("Property not found.");
@@ -28,7 +28,7 @@ public class PropertyCommandService(IPropertyRepository propertyRepository, IUni
         // EF Core Change Tracking se encarga de detectar la actualización
         await unitOfWork.CompleteAsync();
         return property;
-    }
+    }*/
 
     public async Task<Property?> Handle(UpdatePropertyAddressCommand command)
     {
@@ -40,7 +40,7 @@ public class PropertyCommandService(IPropertyRepository propertyRepository, IUni
         return property;
     }
 
-    public async Task<Property?> Handle(DeactivatePropertyCommand command)
+    /*public async Task<Property?> Handle(DeactivatePropertyCommand command)
     {
         // Para que sea seguro, el comando también debería tener el OwnerId
         // Por ahora, usamos el método inseguro, pero lo ideal es validar el dueño
@@ -55,7 +55,7 @@ public class PropertyCommandService(IPropertyRepository propertyRepository, IUni
         await unitOfWork.CompleteAsync(); // Usamos unitOfWork, no el Context directamente
             
         return property;
-    }
+    }*/
     
     public async Task<Property?> Handle(UpdatePropertyCommand command)
     {

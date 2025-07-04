@@ -37,43 +37,73 @@ public static class ModelBuilderExtensions
         builder.Entity<Property>(b =>
         {
             b.ToTable("properties");
-            b.HasKey(p => p.Id);
-            b.Property(p => p.Id).HasConversion(id => id.Id, value => new PropertyId(value));
-            b.Property(p => p.OwnerId).HasConversion(id => id.Id, value => new OwnerId(value)).HasColumnName("owner_id");
 
+            // Clave como Value Object
+            b.HasKey(p => p.Id);
+            b.Property(p => p.Id)
+                .ValueGeneratedNever()
+                .HasConversion(id => id.Id, value => new PropertyId(value));
+
+            b.Property(p => p.OwnerId)
+                .HasConversion(id => id.Id, value => new OwnerId(value))
+                .HasColumnName("owner_id");
+
+            // ----- Address embebido -----
             b.OwnsOne(p => p.Address, address =>
             {
-                address.WithOwner().HasForeignKey("Id");
-                address.Property(a => a.Street).HasColumnName("address_street").IsRequired().HasMaxLength(120);
-                address.Property(a => a.Number).HasColumnName("address_number").HasMaxLength(20);
-                address.Property(a => a.City).HasColumnName("address_city").IsRequired().HasMaxLength(50);
-                address.Property(a => a.PostalCode).HasColumnName("address_postal_code").HasMaxLength(10);
-                address.Property(a => a.Country).HasColumnName("address_country").IsRequired().HasMaxLength(30);
-            });
-            
-            b.OwnsOne(p => p.Region, region =>
-            {
-                region.WithOwner().HasForeignKey("Id");
-                region.Property(r => r.Name).HasColumnName("region_name").IsRequired().HasMaxLength(50);
-                region.Property(r => r.Code).HasColumnName("region_code").HasMaxLength(10);
-            });
-            
-            b.OwnsOne(p => p.District, district =>
-            {
-                district.WithOwner().HasForeignKey("Id");
-               district.Property(d => d.Name).HasColumnName("district_name").IsRequired().HasMaxLength(50);
-               district.Property(d => d.Ubigeo).HasColumnName("district_ubigeo").HasMaxLength(10);
+                // Configuración explícita para cada propiedad del Address
+                address.Property(a => a.Street)
+                       .HasColumnName("address_street")
+                       .IsRequired()
+                       .HasMaxLength(120);
+
+                address.Property(a => a.Number)
+                       .HasColumnName("address_number")
+                       .HasMaxLength(20);
+
+                address.Property(a => a.City)
+                       .HasColumnName("address_city")
+                       .IsRequired()
+                       .HasMaxLength(50);
+
+                address.Property(a => a.PostalCode)
+                       .HasColumnName("address_postal_code")
+                       .HasMaxLength(10);
+
+                address.Property(a => a.Country)
+                       .HasColumnName("address_country")
+                       .IsRequired()
+                       .HasMaxLength(30);
+
+                // AGREGADAS: Configuración para Latitude y Longitude
+                address.Property(a => a.Latitude)
+                       .HasColumnName("address_latitude")
+                       .HasColumnType("decimal(10,8)")
+                       .IsRequired();
+
+                address.Property(a => a.Longitude)
+                       .HasColumnName("address_longitude")
+                       .HasColumnType("decimal(11,8)")
+                       .IsRequired();
             });
 
-            // --- INICIO DE LA SOLUCIÓN FINAL ---
-            // Se configura la colección de Photos como un tipo poseído (Owned Type).
-            b.OwnsOne(p => p.Photo, photoBuilder =>
+            // ----- Region embebido -----
+            b.OwnsOne(p => p.Region, region =>
             {
-                // Mapeamos la propiedad 'PhotoUrl' del record 'PropertyPhoto' a una columna.
-                // Usamos nameof para evitar errores de tipeo. Es sensible a mayúsculas/minúsculas.
-                photoBuilder.Property(photo => photo.PhotoUrl)
-                    .HasColumnName("photo_url") // Nombre de la columna en la BD.
-                    .HasMaxLength(500);         // Longitud máxima.
+                region.Property(r => r.Name)
+                      .HasColumnName("region_name")
+                      .IsRequired()
+                      .HasMaxLength(50);
+
+            });
+
+            // ----- District embebido -----
+            b.OwnsOne(p => p.District, district =>
+            {
+                district.Property(d => d.Name)
+                        .HasColumnName("district_name")
+                        .IsRequired()
+                        .HasMaxLength(50);
             });
         });
         
@@ -81,7 +111,7 @@ public static class ModelBuilderExtensions
         {
             b.ToTable("technician_inventories");
             b.HasKey(i => i.Id);
-            b.Property(i => i.Id).IsRequired().ValueGeneratedNever();  // CORRECCIÓN: Indicamos que es un Id generado por la aplicación
+            b.Property(i => i.Id).IsRequired().ValueGeneratedNever();
     
             b.Property(i => i.TechnicianId)
                 .HasConversion(id => id.Id, value => new TechnicianId(value))
@@ -99,34 +129,22 @@ public static class ModelBuilderExtensions
             b.ToTable("component_stocks");
             b.HasKey(cs => cs.Id);
 
-            // --- NO MÁS `OwnsOne` PARA `ComponentId` ---
-
-            // 1. ENSEÑA A EF CORE CÓMO MANEJAR EL VALUE OBJECT `ComponentId`
-            // Le decimos que la propiedad `ComponentId` se convierte a/desde un `int` (o el tipo que sea tu Id)
-            // para ser almacenada en la base de datos.
             b.Property(cs => cs.ComponentId)
                 .HasConversion(id => id.Id, value => new ComponentId(value))
-                .HasColumnName("component_id") // Es buena práctica nombrar la columna explícitamente.
+                .HasColumnName("component_id")
                 .IsRequired();
 
-            // 2. CREA EL ÍNDICE COMPUESTO USANDO EXPRESIONES LAMBDA
-            // Ahora que EF Core entiende `ComponentId` como una propiedad simple (convertible),
-            // esta expresión lambda SÍ FUNCIONA y es totalmente segura a nivel de tipos.
             b.HasIndex(cs => new { cs.TechnicianInventoryId, cs.ComponentId }).IsUnique();
     
-            // 3. DEFINE LA RELACIÓN CON `Component`
-            // La clave foránea es la propiedad `ComponentId` que ya hemos configurado.
             b.HasOne<Component>()
                 .WithMany()
-                .HasForeignKey(cs => cs.ComponentId) // Usamos la lambda, que es más seguro.
+                .HasForeignKey(cs => cs.ComponentId)
                 .IsRequired();
 
-            // El resto de tus propiedades (ya estaban bien)
             b.Property(cs => cs.TechnicianInventoryId).IsRequired();
             b.Property(cs => cs.QuantityAvailable).IsRequired();
             b.Property(cs => cs.AlertThreshold).IsRequired();
             b.Property(cs => cs.LastUpdated).IsRequired();
         }); 
-        // NOTA: No hay ningún builder.Entity<PropertyPhoto>() aquí. Fue eliminado.
     }
 }

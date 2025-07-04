@@ -111,8 +111,8 @@ public async Task<IActionResult> DeleteProperty(Guid propertyId)
 /// <returns>
 /// <see cref="IActionResult"/> con la propiedad actualizada o 404 si no se encuentra.
 /// </returns>
-[HttpPut("{propertyId:guid}/photo")]
-public async Task<IActionResult> AddPhotoToProperty(Guid propertyId, [FromBody] AddPhotoResource resource)
+//[HttpPut("{propertyId:guid}/photo")]
+/*public async Task<IActionResult> AddPhotoToProperty(Guid propertyId, [FromBody] AddPhotoResource resource)
 {
     var command = new AddPhotoToPropertyCommand(propertyId, resource.PhotoUrl);
     
@@ -122,7 +122,7 @@ public async Task<IActionResult> AddPhotoToProperty(Guid propertyId, [FromBody] 
 
     var responseResource = PropertyResourceFromEntityAssembler.ToResourceFromEntity(property);
     return Ok(responseResource);
-}
+}*/
 
 /// <summary>
 /// Actualiza la dirección de una propiedad existente.

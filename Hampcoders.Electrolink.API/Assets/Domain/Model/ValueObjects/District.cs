@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects;
 
-public record District(string Name, string Ubigeo);
+[Owned]
+public record District(string Name);

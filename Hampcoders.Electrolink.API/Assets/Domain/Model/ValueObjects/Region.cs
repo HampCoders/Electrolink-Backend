@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Hampcoders.Electrolink.API.Assets.Domain.Model.ValueObjects;
 
-public record Region(string Name, string Code);
+[Owned]
+public record Region(string Name);

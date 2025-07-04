@@ -5,11 +5,11 @@ namespace Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
 
 public partial class Property
 {
-    public EPropertyStatus Status { get; private set; }
-    public PropertyPhoto? Photo { get; private set; } // Puede ser nulo
+    //public EPropertyStatus Status { get; private set; }
+    //public PropertyPhoto? Photo { get; private set; } // Puede ser nulo
 
 
-    private Property()
+    public Property()
     {
 
     }
@@ -19,7 +19,7 @@ public partial class Property
     /// </summary>
     /// <param name="photoUrl">La URL de la nueva foto, o null para eliminar la existente.</param>
     
-    public void SetPhoto(string? photoUrl)
+    /*public void SetPhoto(string? photoUrl)
     {
         if (string.IsNullOrWhiteSpace(photoUrl))
         {
@@ -27,26 +27,26 @@ public partial class Property
             return;
         }
         Photo = new PropertyPhoto(photoUrl);
-    }
+    }*/
     
     private void UpdateAddress(Address newAddress)
     {
-        if (Status == EPropertyStatus.Inactive)
-            throw new InvalidOperationException("Cannot update the address of an inactive property.");
+        /*if (Status == EPropertyStatus.Inactive)
+            throw new InvalidOperationException("Cannot update the address of an inactive property.");*/
         Address = newAddress;
     }
     
-    private void Deactivate()
+    /*private void Deactivate()
     {
         if (Status == EPropertyStatus.Inactive) return;
         Status = EPropertyStatus.Inactive;
-    }
+    }*/
 
-    public void Handle(AddPhotoToPropertyCommand command)
+    /*public void Handle(AddPhotoToPropertyCommand command)
     {
         if(command.Id == Id.Id)
             SetPhoto(command.PhotoUrl);
-    }
+    }*/
     
     public void Handle(UpdatePropertyAddressCommand command)
     {
@@ -54,19 +54,19 @@ public partial class Property
             UpdateAddress(command.NewAddress);
     }
     
-    public void Handle(DeactivatePropertyCommand command)
+    /*public void Handle(DeactivatePropertyCommand command)
     {
         if (command.Id == Id.Id)
             Deactivate();
-    }
+    }*/
     
     public void Handle(UpdatePropertyCommand command)
     {
         if (command.Id != Id.Id) return;
 
         // Verificar que la propiedad esté activa
-        if (Status == EPropertyStatus.Inactive)
-            throw new InvalidOperationException("No se puede actualizar una propiedad inactiva.");
+        //if (Status == EPropertyStatus.Inactive)
+        ////  throw new InvalidOperationException("No se puede actualizar una propiedad inactiva.");
 
         // Convertir Guid a OwnerId
         OwnerId = new OwnerId(command.OwnerId);
@@ -75,7 +75,7 @@ public partial class Property
         Address = command.Address;
 
         // Crear objetos Region y District con los 2 parámetros requeridos
-        Region = new Region(command.RegionName, command.RegionCode);
-        District = new District(command.DistrictName, command.DistrictUbigeo);
+        Region = new Region(command.RegionName);
+        District = new District(command.DistrictName);
     }
 }
