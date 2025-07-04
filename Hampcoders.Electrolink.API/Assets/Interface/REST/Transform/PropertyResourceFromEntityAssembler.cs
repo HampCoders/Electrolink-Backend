@@ -16,7 +16,6 @@ public static class PropertyResourceFromEntityAssembler
             entity.Region.Name,
             entity.District.Name
             //entity.Status.ToString()
-            //entity.Photo?.PhotoUrl
             );
     }
 }
