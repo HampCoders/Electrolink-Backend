@@ -19,8 +19,8 @@ namespace Hampcoders.Electrolink.API.Assets.Interface.REST;
 /// </param>
 [ApiController]
 [Route("api/v1/[controller]")]
-[SwaggerTag("Catalog Endpoints")]
-public class CatalogController(
+[SwaggerTag("Component Endpoints")]
+public class ComponentsController(
     IComponentTypeCommandService componentTypeCommandService, 
     IComponentCommandService componentCommandService) : ControllerBase
 {
