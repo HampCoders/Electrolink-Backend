@@ -45,15 +45,15 @@
       <Folder Include="Analytics\Domain\" />
       <Folder Include="Analytics\Infrastructure\" />
       <Folder Include="Analytics\Interface\" />
-      <Folder Include="IAM\Application\" />
-      <Folder Include="IAM\Domain\" />
-      <Folder Include="IAM\Infrastructure\" />
-      <Folder Include="IAM\Interface\" />
       <Folder Include="Planning\Application\" />
       <Folder Include="Planning\Domain\" />
       <Folder Include="Planning\Infrastructure\" />
       <Folder Include="Planning\Interface\" />
       <Folder Include="Subscription\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Profiles\.DS_Store" />
     </ItemGroup>
 
 </Project>
