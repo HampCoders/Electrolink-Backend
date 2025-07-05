@@ -25,7 +25,7 @@ namespace Hampcoders.Electrolink.API.Assets.Interface.REST;
 [ApiController]
 [Route("api/v1/technicians")]
 [SwaggerTag("Technician Inventory Endpoints")]
-public class TechniciansInventoryController(
+public class TechnicianInventoriesController(
     ITechnicianInventoryCommandService inventoryCommandService,
     ITechnicianInventoryQueryService inventoryQueryService,
     IComponentQueryService componentQueryService) : ControllerBase
