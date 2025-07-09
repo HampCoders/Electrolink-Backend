@@ -46,7 +46,11 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+<<<<<<< HEAD
 // General Config
+=======
+// Add services to the container.
+>>>>>>> 5ddffd9 (remote local work before rebase)
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()));
 
@@ -70,6 +74,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+<<<<<<< HEAD
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Hampcoders.ElectrolinkPlatform.API",
@@ -96,6 +101,31 @@ builder.Services.AddSwaggerGen(options =>
             new OpenApiSecurityScheme { Reference = new OpenApiReference { Id = "Bearer", Type = ReferenceType.SecurityScheme } },
             Array.Empty<string>()
         }
+=======
+    options.SwaggerDoc("v1",
+        new OpenApiInfo
+        {
+            Title = "Hampcoders.ElectrolinkPlatform.API",
+            Version = "v1",
+            Description = "Hampcoders Electrolink Platform API",
+            Contact = new OpenApiContact
+            {
+                Name = "Hampcoders",
+                Email = "contact@hampcoders.com"
+            },
+            License = new OpenApiLicense
+            {
+                Name = "Apache 2.0",
+                Url = new Uri("https://www.apache.org/licenses/LICENSE-2.0")
+            },
+        });
+    options.EnableAnnotations();
+    // Uncomment the following lines to add server information (Development Server)
+    options.AddServer(new OpenApiServer
+    {
+        Url = "http://localhost:5055", 
+        Description = "Development Server"
+>>>>>>> 5ddffd9 (remote local work before rebase)
     });
 });
 
@@ -173,6 +203,10 @@ using (var scope = app.Services.CreateScope())
 // Middleware
 if (app.Environment.IsDevelopment())
 {
+<<<<<<< HEAD
+=======
+    // Uncomment the following lines to enable Swagger in development
+>>>>>>> 5ddffd9 (remote local work before rebase)
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -181,5 +215,12 @@ app.UseCors("AllowAllPolicy");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+<<<<<<< HEAD
 app.Urls.Add("http://*:8080");
+=======
+
+// Uncomment the following line to enable OpenAPI documentation (Development Server)
+// app.Urls.Add("http://*:8080");
+
+>>>>>>> 5ddffd9 (remote local work before rebase)
 app.Run();
