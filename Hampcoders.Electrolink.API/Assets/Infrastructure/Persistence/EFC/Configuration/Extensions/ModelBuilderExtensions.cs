@@ -34,79 +34,43 @@ public static class ModelBuilderExtensions
         });
 
         // --- Configuración para Property ---
-        builder.Entity<Property>(b =>
+        builder.Entity<Property>(prop =>
         {
-            b.ToTable("properties");
+            prop.ToTable("properties");
 
-            // Clave como Value Object
-            b.HasKey(p => p.Id);
-            b.Property(p => p.Id)
-                .ValueGeneratedNever()
-                .HasConversion(id => id.Id, value => new PropertyId(value));
+            // PK
+            prop.HasKey(p => p.Id);
+            prop.Property(p => p.Id)
+                .HasConversion(new StronglyTypedIdConverter<PropertyId>())
+                .HasColumnName("property_id")
+                .IsRequired()
+                .ValueGeneratedNever(); // lo generas tú en el constructor
 
-            b.Property(p => p.OwnerId)
-                .HasConversion(id => id.Id, value => new OwnerId(value))
-                .HasColumnName("owner_id");
+            // Foreign owner
+            prop.Property(p => p.OwnerId)
+                .HasConversion(new StronglyTypedIdConverter<OwnerId>())
+                .HasColumnName("owner_id")
+                .IsRequired();
 
-            // ----- Address embebido -----
-            b.OwnsOne(p => p.Address, address =>
+            // ---- Owned: Address -------------------------------
+            prop.OwnsOne(p => p.Address, addr =>
             {
-                // Configuración explícita para cada propiedad del Address
-                address.Property(a => a.Street)
-                       .HasColumnName("address_street")
-                       .IsRequired()
-                       .HasMaxLength(120);
-
-                address.Property(a => a.Number)
-                       .HasColumnName("address_number")
-                       .HasMaxLength(20);
-
-                address.Property(a => a.City)
-                       .HasColumnName("address_city")
-                       .IsRequired()
-                       .HasMaxLength(50);
-
-                address.Property(a => a.PostalCode)
-                       .HasColumnName("address_postal_code")
-                       .HasMaxLength(10);
-
-                address.Property(a => a.Country)
-                       .HasColumnName("address_country")
-                       .IsRequired()
-                       .HasMaxLength(30);
-
-                // AGREGADAS: Configuración para Latitude y Longitude
-                address.Property(a => a.Latitude)
-                       .HasColumnName("address_latitude")
-                       .HasColumnType("decimal(10,8)")
-                       .IsRequired();
-
-                address.Property(a => a.Longitude)
-                       .HasColumnName("address_longitude")
-                       .HasColumnType("decimal(11,8)")
-                       .IsRequired();
+                addr.Property(a => a.Street).IsRequired().HasMaxLength(120).HasColumnName("street");
+                addr.Property(a => a.Number).IsRequired().HasMaxLength(20).HasColumnName("number");
             });
 
-            // ----- Region embebido -----
-            b.OwnsOne(p => p.Region, region =>
+            // ---- Owned: Region -------------------------------
+            prop.OwnsOne(p => p.Region, reg =>
             {
-                region.Property(r => r.Name)
-                      .HasColumnName("region_name")
-                      .IsRequired()
-                      .HasMaxLength(50);
-
+                reg.Property(r => r.Name).IsRequired().HasMaxLength(60).HasColumnName("region");
             });
 
-            // ----- District embebido -----
-            b.OwnsOne(p => p.District, district =>
+            // ---- Owned: District ------------------------------
+            prop.OwnsOne(p => p.District, dist =>
             {
-                district.Property(d => d.Name)
-                        .HasColumnName("district_name")
-                        .IsRequired()
-                        .HasMaxLength(50);
+                dist.Property(d => d.Name).IsRequired().HasMaxLength(60).HasColumnName("district");
             });
         });
-        
         builder.Entity<TechnicianInventory>(b =>
         {
             b.ToTable("technician_inventories");

@@ -3,4 +3,5 @@
 public interface IAssetsContextFacade
 {
     Task<Guid> CreateTechnicianInventory(Guid technicianId);
+    Task<bool> ExistsInventoryForTechnician(Guid technicianId);
 }
