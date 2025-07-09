@@ -1,3 +1,4 @@
+using Hampcoders.Electrolink.API.Profiles.Application.Internal.OutboundServices;
 using Hampcoders.Electrolink.API.Profiles.Domain.Model.Aggregates;
 using Hampcoders.Electrolink.API.Profiles.Domain.Model.Commands;
 using Hampcoders.Electrolink.API.Profiles.Domain.Model.ValueObjects;
@@ -9,6 +10,7 @@ namespace Hampcoders.Electrolink.API.Profiles.Application.Internal.CommandServic
 
 public class ProfileCommandService(
   IProfileRepository profileRepository,
+  ExternalAssetService externalAssetService,
   IUnitOfWork unitOfWork)
   : IProfileCommandService
 {
@@ -42,6 +44,11 @@ public class ProfileCommandService(
 
       await profileRepository.AddAsync(profile);
       await unitOfWork.CompleteAsync();
+      
+      if (command.Role == Role.Technician && profile.Technician != null)
+      {
+        await externalAssetService.CreateTechnicianInventoryAsync(profile.Technician.Id);
+      }
       return profile;
     }
     catch (Exception)
