@@ -7,6 +7,8 @@ using Hamcoders.Electrolink.API.Monitoring.Infrastructure.Persistence.EFC.Config
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Entities;
 using Hampcoders.Electrolink.API.Assets.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using Hampcoders.Electrolink.API.IAM.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using Hampcoders.Electrolink.API.Profiles.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Infrastructure.Persistence.EFC.Configuration.Extensions;
 
@@ -39,10 +41,15 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     {
         base.OnModelCreating(builder);
         
-        builder.UseSnakeCaseNamingConvention();
+
+        builder.ApplyIamConfiguration();
+        builder.ApplyProfilesConfiguration();
         builder.ApplyAssetsConfiguration();
         builder.ApplyMonitoringConfiguration();
         builder.ApplyServiceDesignAndPlanningConfiguration();
+        
+        builder.UseSnakeCaseNamingConvention();
+
     }
     
     

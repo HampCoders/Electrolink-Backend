@@ -5,7 +5,7 @@ namespace Hampcoders.Electrolink.API.Profiles.Domain.Model.Entities;
 public class HomeOwner
 {
   [Key] // Marca esta propiedad como clave primaria
-  public long Id { get; private set; }
+  public Guid Id { get; private set; }
 
   private readonly List<string> _properties = new();
   public IReadOnlyList<string> Properties => _properties.AsReadOnly();

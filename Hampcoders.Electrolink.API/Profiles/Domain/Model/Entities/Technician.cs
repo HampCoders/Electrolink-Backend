@@ -5,7 +5,7 @@ namespace Hampcoders.Electrolink.API.Profiles.Domain.Model.Entities;
 public class Technician
 {
   [Key]
-  public long Id { get; private set; }
+  public Guid Id { get; private set; }
 
   public string LicenseNumber { get; private set; }
   public string Specialization { get; private set; }

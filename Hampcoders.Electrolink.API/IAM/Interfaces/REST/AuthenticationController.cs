@@ -27,7 +27,7 @@ public class AuthenticationController(IUserCommandService userCommandService) : 
     [SwaggerOperation(
         Summary = "Sign in",
         Description = "Sign in a user",
-        OperationId = "SignIn")]
+        OperationId = "SignIn")] 
     [SwaggerResponse(StatusCodes.Status200OK, "The user was authenticated", typeof(AuthenticatedUserResource))]
     public async Task<IActionResult> SignIn([FromBody] SignInResource signInResource)
     {

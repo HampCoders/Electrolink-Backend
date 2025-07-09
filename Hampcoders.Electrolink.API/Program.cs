@@ -3,13 +3,13 @@ using Hamcoders.Electrolink.API.Monitoring.Application.Internal.QueryServices;
 using Hamcoders.Electrolink.API.Monitoring.Domain.Repository;
 using Hamcoders.Electrolink.API.Monitoring.Domain.Services;
 using Hamcoders.Electrolink.API.Monitoring.Infrastructure.Persistence.EfCore;
-
+using Hampcoders.Electrolink.API.Assets.Application.ACL;
 using Hampcoders.Electrolink.API.Assets.Application.Internal.CommandServices;
 using Hampcoders.Electrolink.API.Assets.Application.Internal.QueryServices;
 using Hampcoders.Electrolink.API.Assets.Domain.Repositories;
 using Hampcoders.Electrolink.API.Assets.Domain.Services;
 using Hampcoders.Electrolink.API.Assets.Infrastructure.Persistence.EFC.Repositories;
-
+using Hampcoders.Electrolink.API.Assets.Interface.ACL;
 using Hampcoders.Electrolink.API.IAM.Application.Internal.CommandServices;
 using Hampcoders.Electrolink.API.IAM.Application.Internal.OutboundServices;
 using Hampcoders.Electrolink.API.IAM.Application.Internal.QueryServices;
@@ -24,6 +24,7 @@ using Hampcoders.Electrolink.API.IAM.Interfaces.ACL.Services;
 
 using Hampcoders.Electrolink.API.Profiles.Application.ACL;
 using Hampcoders.Electrolink.API.Profiles.Application.Internal.CommandServices;
+using Hampcoders.Electrolink.API.Profiles.Application.Internal.OutboundServices;
 using Hampcoders.Electrolink.API.Profiles.Application.Internal.QueryServices;
 using Hampcoders.Electrolink.API.Profiles.Domain.Repositories;
 using Hampcoders.Electrolink.API.Profiles.Domain.Services;
@@ -46,11 +47,8 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-<<<<<<< HEAD
 // General Config
-=======
 // Add services to the container.
->>>>>>> 5ddffd9 (remote local work before rebase)
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()));
 
@@ -74,60 +72,52 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-<<<<<<< HEAD
+    // Documento principal
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Hampcoders.ElectrolinkPlatform.API",
-        Version = "v1",
+        Title       = "Hampcoders.ElectrolinkPlatform.API",
+        Version     = "v1",
         Description = "Hampcoders Electrolink Platform API",
-        Contact = new OpenApiContact { Name = "Hampcoders", Email = "contact@hampcoders.com" },
-        License = new OpenApiLicense { Name = "Apache 2.0", Url = new Uri("https://www.apache.org/licenses/LICENSE-2.0") }
+        Contact     = new OpenApiContact { Name = "Hampcoders", Email = "contact@hampcoders.com" },
+        License     = new OpenApiLicense { Name = "Apache 2.0", Url = new Uri("https://www.apache.org/licenses/LICENSE-2.0") }
     });
+
     options.EnableAnnotations();
 
+    // JWT Bearer
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        In = ParameterLocation.Header,
-        Description = "Please enter token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "bearer"
+        In            = ParameterLocation.Header,
+        Description   = "Ingrese el token JWT",
+        Name          = "Authorization",
+        Type          = SecuritySchemeType.Http,
+        Scheme        = "bearer",
+        BearerFormat  = "JWT"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-            new OpenApiSecurityScheme { Reference = new OpenApiReference { Id = "Bearer", Type = ReferenceType.SecurityScheme } },
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id   = "Bearer"
+                }
+            },
             Array.Empty<string>()
         }
-=======
-    options.SwaggerDoc("v1",
-        new OpenApiInfo
-        {
-            Title = "Hampcoders.ElectrolinkPlatform.API",
-            Version = "v1",
-            Description = "Hampcoders Electrolink Platform API",
-            Contact = new OpenApiContact
-            {
-                Name = "Hampcoders",
-                Email = "contact@hampcoders.com"
-            },
-            License = new OpenApiLicense
-            {
-                Name = "Apache 2.0",
-                Url = new Uri("https://www.apache.org/licenses/LICENSE-2.0")
-            },
-        });
-    options.EnableAnnotations();
-    // Uncomment the following lines to add server information (Development Server)
+    });
+
+    // Servidor local de desarrollo
     options.AddServer(new OpenApiServer
     {
-        Url = "http://localhost:5055", 
+        Url         = "http://localhost:5055",
         Description = "Development Server"
->>>>>>> 5ddffd9 (remote local work before rebase)
     });
 });
+
 
 // CORS
 builder.Services.AddCors(options =>
@@ -190,6 +180,10 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
 builder.Services.AddScoped<IIamContextFacade, IamContextFacade>();
 
+// Assets ACL
+builder.Services.AddScoped<IAssetsContextFacade, AssetsContextFacade>();
+builder.Services.AddScoped<ExternalAssetService>(); 
+
 var app = builder.Build();
 
 // DB Init
@@ -203,10 +197,7 @@ using (var scope = app.Services.CreateScope())
 // Middleware
 if (app.Environment.IsDevelopment())
 {
-<<<<<<< HEAD
-=======
     // Uncomment the following lines to enable Swagger in development
->>>>>>> 5ddffd9 (remote local work before rebase)
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -215,12 +206,9 @@ app.UseCors("AllowAllPolicy");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-<<<<<<< HEAD
-app.Urls.Add("http://*:8080");
-=======
 
 // Uncomment the following line to enable OpenAPI documentation (Development Server)
+app.Urls.Add("http://*:5055");
 // app.Urls.Add("http://*:8080");
 
->>>>>>> 5ddffd9 (remote local work before rebase)
 app.Run();
