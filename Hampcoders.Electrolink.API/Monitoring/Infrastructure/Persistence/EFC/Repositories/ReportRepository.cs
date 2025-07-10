@@ -12,8 +12,6 @@ public class ReportRepository(AppDbContext context)
     public async Task<Report?> GetByRequestIdAsync(Guid requestId)
     {
         return await context.Set<Report>()
-            .Include(r => r.Photos) 
             .FirstOrDefaultAsync(r => r.RequestId == requestId);
     }
-    
 }

@@ -12,7 +12,7 @@ public class ServiceOperationQueryService(
 {
     public async Task<ServiceOperation?> Handle(GetServiceStatusByIdQuery query)
     {
-        return await repo.FindByGuidAsync(query.RequestId);
+        return await repo.FindByIdAsync(query.RequestId);
     }
     
     public async Task<IEnumerable<ServiceOperation>> Handle(GetClientHistoryByTechnicianIdQuery query)

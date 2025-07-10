@@ -43,20 +43,16 @@ public class ReportsController(
         return Ok(report);
     }
     
-    // POST /api/v1/report/photo/{id}
     [HttpPost("{id}/photo")]
     [SwaggerOperation(Summary = "Add Photo", Description = "Adds a photo to a report.", OperationId = "AddPhoto")]
     [SwaggerResponse(StatusCodes.Status201Created, "Photo added", typeof(Report))]
     public async Task<IActionResult> AddPhoto(Guid id, [FromBody] CreateReportPhotoResource resource)
     {
-        if (id != resource.ReportId)
-            return BadRequest("Path ID and body RequestId do not match.");
-
-        var command = CreateReportPhotoCommandFromResourceAssembler.ToCommandFromResource(resource);
+        var command = CreateReportPhotoCommandFromResourceAssembler.ToCommandFromResource(id, resource);
         await reportCommandService.Handle(command);
 
-        var report = await reportQueryService.GetByRequestIdAsync(resource.ReportId);
-        return CreatedAtAction(nameof(GetReport), new { id = resource.ReportId }, report);
+        var report = await reportQueryService.GetByIdWithPhotosAsync(id);
+        return CreatedAtAction(nameof(GetReport), new { id }, report);
     }
     
     [HttpDelete("{id}")]

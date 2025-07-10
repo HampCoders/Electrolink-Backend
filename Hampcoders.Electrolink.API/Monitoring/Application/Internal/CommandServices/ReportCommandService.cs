@@ -8,14 +8,14 @@ using Microsoft.EntityFrameworkCore;
 namespace Hamcoders.Electrolink.API.Monitoring.Application.Internal.CommandServices;
 
 public class ReportCommandService(IReportRepository _repository, 
-    IServiceOperationRepository _operationRepository,
+    IServiceOperationRepository _operationRepository, IReportPhotoRepository _reportPhotoRepository,
     IUnitOfWork unitOfWork) : IReportCommandService
 {
     
     public async Task Handle(AddReportCommand command)
     {
         // 🔐 Validar si existe el ServiceOperation
-        var operation = await _operationRepository.FindByGuidAsync(command.RequestId);
+        var operation = await _operationRepository.FindByIdAsync(command.RequestId);
         if (operation == null)
             throw new Exception("ServiceOperation not found");
 
@@ -28,13 +28,15 @@ public class ReportCommandService(IReportRepository _repository,
     }
     public async Task Handle(AddReportPhotoCommand command)
     {
-        var report = await _repository.FindByGuidAsync(command.ReportId);
+        var report = await _repository.FindByIdAsync(command.ReportId);
         if (report == null) throw new Exception("Report not found");
-
-        if (report.Photos.All(p => p.Url != command.Url || p.Type != command.Type))
-        {
-            report.AddPhoto(command.Url, command.Type);
-        }
+        
+        var existingPhotos = await _reportPhotoRepository.GetByReportIdAsync(command.ReportId);
+        var alreadyExists = existingPhotos.Any(p => p.Url == command.Url && p.Type == command.Type);
+        if (alreadyExists) return;
+        
+        var photo = new ReportPhoto(command.ReportId, command.Url, command.Type);
+        await _reportPhotoRepository.AddAsync(photo);
 
         try
         {
@@ -45,9 +47,10 @@ public class ReportCommandService(IReportRepository _repository,
             throw new InvalidOperationException("Concurrency conflict occurred while saving changes.", ex);
         }
     }
+
     public async Task Handle(DeleteReportCommand command)
     {
-        var report = await _repository.FindByGuidAsync(command.ReportId);
+        var report = await _repository.FindByIdAsync(command.ReportId);
         if (report == null)
             throw new KeyNotFoundException("Rating not found");
         _repository.Remove(report);

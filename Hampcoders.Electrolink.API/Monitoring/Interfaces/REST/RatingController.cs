@@ -72,12 +72,9 @@ public class RatingsController(
     [SwaggerResponse(StatusCodes.Status200OK, "Rating updated", typeof(Rating))]
     public async Task<IActionResult> UpdateRating(Guid id, [FromBody] UpdateRatingResource resource)
     {
-        if (id != resource.RatingId)
-            return BadRequest("ID mismatch between route and body.");
-
-        var command = new UpdateRatingCommand(resource.RatingId, resource.Score, resource.Comment);
+        var command = new UpdateRatingCommand(id, resource.Score, resource.Comment);
         await ratingCommandService.Handle(command);
-    
+
         return Ok();
     }
     

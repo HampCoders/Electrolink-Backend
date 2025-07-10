@@ -20,7 +20,7 @@ public class ServiceOperationCommandService(
 
     public async Task<ServiceOperation?> Handle(UpdateServiceStatusCommand command)
     {
-        var op = await repo.FindByGuidAsync(command.RequestId);
+        var op = await repo.FindByIdAsync(command.RequestId);
         if (op is null) throw new ArgumentException($"ServiceOperation with ID {command.RequestId} not found.");
 
         op.Handle(command);

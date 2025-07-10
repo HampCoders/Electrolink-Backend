@@ -6,6 +6,6 @@ namespace Hamcoders.Electrolink.API.Monitoring.Interfaces.REST.Transform;
 
 public static class UpdateServiceStatusCommandFromResourceAssembler
 {
-    public static UpdateServiceStatusCommand ToCommandFromResource(UpdateServiceStatusResource res)
-        => new(res.RequestId, Enum.Parse<ServiceStatus>(res.NewStatus));
+    public static UpdateServiceStatusCommand ToCommandFromResource(Guid id, UpdateServiceStatusResource res)
+        => new(id, Enum.Parse<ServiceStatus>(res.NewStatus));
 }
