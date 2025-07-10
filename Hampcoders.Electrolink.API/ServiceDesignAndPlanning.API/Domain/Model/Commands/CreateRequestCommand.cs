@@ -1,12 +1,15 @@
 using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Model.ValueObjects;
+
 namespace Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Model.Commands;
 
+/// <summary>
+/// Command to create a new service request
+/// </summary>
 public record CreateRequestCommand(
-    string RequestId,
-    string ClientId,
-    string TechnicianId,
-    string PropertyId,
-    string ServiceId,
+    Guid ClientId,
+    Guid TechnicianId,
+    Guid PropertyId,
+    Guid ServiceId,
     string Status,
     DateOnly ScheduledDate,
     string ProblemDescription,

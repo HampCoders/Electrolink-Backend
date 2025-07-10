@@ -39,12 +39,17 @@ public class RequestsController : ControllerBase
     [HttpGet("clients/{clientId}/[controller]")]
     [SwaggerOperation(Summary = "Get Requests by Client", OperationId = "GetRequestsByClient")]
     [SwaggerResponse(200, "Requests found", typeof(IEnumerable<RequestResource>))]
+    [SwaggerResponse(400, "Invalid client ID format")]
     public async Task<IActionResult> GetByClient(string clientId)
     {
-        var reqs = await _qry.Handle(new GetRequestsByClientIdQuery(clientId));
+        if (!Guid.TryParse(clientId, out var parsedClientId))
+            return BadRequest("Invalid client ID format.");
+
+        var reqs = await _qry.Handle(new GetRequestsByClientIdQuery(parsedClientId));
         var resources = reqs.Select(RequestResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(resources);
     }
+
 
     [HttpPost("[controller]")]
     [SwaggerOperation(Summary = "Create a new Request", OperationId = "CreateRequest")]

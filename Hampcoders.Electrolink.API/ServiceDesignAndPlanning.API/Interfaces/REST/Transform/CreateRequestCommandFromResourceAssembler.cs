@@ -8,12 +8,11 @@ public static class CreateRequestCommandFromResourceAssembler
 {
     public static CreateRequestCommand ToCommandFromResource(CreateRequestResource r) =>
         new CreateRequestCommand(
-            Guid.NewGuid().ToString(),
             r.ClientId,
             r.TechnicianId,
             r.PropertyId,
             r.ServiceId,
-            "Pending",                  
+            "Pending", // Si deseas parametrizar el estado, agrégalo al Resource
             r.ScheduledDate,
             r.ProblemDescription,
             new ElectricBill(

@@ -5,7 +5,7 @@ namespace Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Reposit
 
 public interface IScheduleRepository : IBaseRepository<Schedule>
 {
-    Task<IEnumerable<Schedule>> ListByTechnicianIdAsync(string technicianId);
+    Task<IEnumerable<Schedule>> ListByTechnicianIdAsync(Guid technicianId);
     Task<IEnumerable<Schedule>> ListByDateAsync(DateOnly date);
     Task<Schedule?> FindByIdAsync(string scheduleId);
     Task UpdateAsync(Schedule schedule);

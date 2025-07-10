@@ -1,4 +1,5 @@
 using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Model.ValueObjects;
+using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Model.Entities;
 
 namespace Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Model.Aggregates;
 
@@ -13,7 +14,7 @@ public partial class Request
             Status = "Cancelled";
     }
 
-    public void AssignTechnician(string technicianId)
+    public void AssignTechnician(Guid technicianId)
     {
         TechnicianId = technicianId;
         Status = "Confirmed";
@@ -23,7 +24,6 @@ public partial class Request
     {
         if (!Photos.Any(p => p.PhotoId == photoId))
             Photos.Add(new RequestPhoto(photoId, url));
-
     }
 
     public void ChangeStatus(string newStatus)

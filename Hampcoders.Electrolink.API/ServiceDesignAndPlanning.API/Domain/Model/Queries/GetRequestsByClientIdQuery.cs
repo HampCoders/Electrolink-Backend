@@ -1,3 +1,3 @@
 namespace Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Model.Queries;
 
-public record GetRequestsByClientIdQuery(string ClientId);
+public record GetRequestsByClientIdQuery(Guid  ClientId);

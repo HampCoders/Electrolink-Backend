@@ -2,7 +2,7 @@ namespace Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Model.C
 
 public record CreateScheduleCommand(
     string ScheduleId,
-    string TechnicianId,
+    Guid TechnicianId,
     string Day,
     string StartTime,
     string EndTime

@@ -16,7 +16,7 @@ public class SDPContextFacade(IRequestQueryService requestQueryService) : ISDPCo
         return await requestQueryService.Handle(query);
     }
 
-    public async Task<IEnumerable<Request>> FetchRequestsByClientIdAsync(string clientId)
+    public async Task<IEnumerable<Request>> FetchRequestsByClientIdAsync(Guid clientId)
     {
         var query = new GetRequestsByClientIdQuery(clientId);
         return await requestQueryService.Handle(query);

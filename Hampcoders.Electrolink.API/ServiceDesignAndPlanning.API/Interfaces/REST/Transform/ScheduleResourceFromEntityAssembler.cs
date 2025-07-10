@@ -8,7 +8,7 @@ public static class ScheduleResourceFromEntityAssembler
     public static ScheduleResource ToResourceFromEntity(Schedule s) =>
         new ScheduleResource(
             s.ScheduleId,
-            s.TechnicianId,
+            s.TechnicianId.ToString(),
             s.Day,
             s.StartTime,
             s.EndTime

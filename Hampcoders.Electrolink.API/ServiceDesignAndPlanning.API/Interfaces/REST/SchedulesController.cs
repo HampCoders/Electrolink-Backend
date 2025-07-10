@@ -32,10 +32,12 @@ public class SchedulesController : ControllerBase
     [SwaggerResponse(200, "Schedules found", typeof(IEnumerable<ScheduleResource>))]
     public async Task<IActionResult> GetByTechnician(string technicianId)
     {
-        var scheds = await _qry.Handle(new GetScheduleByTechnicianIdQuery(technicianId));
+        var guid = Guid.Parse(technicianId); // ✅ Conversión
+        var scheds = await _qry.Handle(new GetScheduleByTechnicianIdQuery(guid)); // ✅ Usar guid
         var resources = scheds.Select(ScheduleResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(resources);
     }
+
 
     [HttpPost("[controller]")]
     [SwaggerOperation(Summary = "Create a new Schedule", OperationId = "CreateSchedule")]
@@ -44,7 +46,7 @@ public class SchedulesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateScheduleResource resource)
     {
         var cmd = CreateScheduleCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var sched = await _cmd.CreateAsync(cmd); 
+        var sched = await _cmd.CreateAsync(cmd); // if you renamed accordingly
         if (sched is null) return BadRequest("Schedule creation failed");
         var res = ScheduleResourceFromEntityAssembler.ToResourceFromEntity(sched);
         return CreatedAtAction(nameof(GetByTechnician), new { technicianId = res.TechnicianId }, res);
