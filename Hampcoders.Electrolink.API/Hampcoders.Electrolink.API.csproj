@@ -52,7 +52,7 @@
       <Folder Include="Planning\Domain\" />
       <Folder Include="Planning\Infrastructure\" />
       <Folder Include="Planning\Interface\" />
-      <Folder Include="Subscription\" />
+      <Folder Include="Subscriptions\" />
     </ItemGroup>
 
     <ItemGroup>
