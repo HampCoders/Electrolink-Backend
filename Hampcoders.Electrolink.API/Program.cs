@@ -1,3 +1,4 @@
+using Cortex.Mediator.DependencyInjection;
 using Hamcoders.Electrolink.API.Monitoring.Application.Internal.CommandServices;
 using Hamcoders.Electrolink.API.Monitoring.Application.Internal.QueryServices;
 using Hamcoders.Electrolink.API.Monitoring.Domain.Repository;
@@ -41,7 +42,7 @@ using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Configura
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Repositories;
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using Hampcoders.Electrolink.API.Shared.Domain.Repositories;
-
+using Hampcoders.Electrolink.API.Shared.Infrastructure.Mediator.Cortex.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -183,6 +184,14 @@ builder.Services.AddScoped<IIamContextFacade, IamContextFacade>();
 // Assets ACL
 builder.Services.AddScoped<IAssetsContextFacade, AssetsContextFacade>();
 builder.Services.AddScoped<ExternalAssetService>(); 
+
+// Add Cortex Mediator for Event Handling
+builder.Services.AddCortexMediator(
+    configuration: builder.Configuration,
+    handlerAssemblyMarkerTypes: new[] { typeof(Program) }, configure: options =>
+    {
+        options.AddOpenCommandPipelineBehavior(typeof(LoggingCommandBehavior<>));
+    });
 
 var app = builder.Build();
 
