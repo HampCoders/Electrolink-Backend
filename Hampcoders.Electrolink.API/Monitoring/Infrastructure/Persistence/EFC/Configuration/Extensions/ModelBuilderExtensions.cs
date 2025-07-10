@@ -49,28 +49,20 @@ public static class ModelBuilderExtensions
 
             b.HasIndex(r => r.RequestId)
                 .IsUnique();
-
-            b.HasMany(r => r.Photos)
-                .WithOne(p => p.Report)
-                .HasForeignKey(p => p.ReportId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            b.Navigation(r => r.Photos)
-                .AutoInclude()
-                .UsePropertyAccessMode(PropertyAccessMode.PreferFieldDuringConstruction);
+            
         });
 
-        // ReportPhoto entity
         builder.Entity<ReportPhoto>(b =>
         {
-            b.HasKey(p => p.PhotoId);
+            b.HasKey(p => p.Id);
 
-            b.Property(p => p.Url)
-                .IsRequired();
+            b.Property(p => p.Url).IsRequired();
+            b.Property(p => p.Type).IsRequired();
+            b.Property(p => p.ReportId).IsRequired();
 
-            b.Property(p => p.Type)
-                .IsRequired();
+            b.HasIndex(p => p.ReportId);
         });
+
 
         // Rating aggregate
         builder.Entity<Rating>(b =>

@@ -6,4 +6,5 @@ namespace Hamcoders.Electrolink.API.Monitoring.Domain.Repository;
 public interface IReportRepository : IBaseRepository<Report>
 {
     Task<Report?> GetByRequestIdAsync(Guid requestId);
+    
 }
