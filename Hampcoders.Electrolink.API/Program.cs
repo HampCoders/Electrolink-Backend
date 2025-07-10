@@ -119,12 +119,12 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
-    // Servidor local de desarrollo
+    /* // Servidor local de desarrollo
     options.AddServer(new OpenApiServer
     {
         Url         = "http://localhost:5055",
         Description = "Development Server"
-    });
+    });*/ 
 });
 
 
@@ -220,20 +220,20 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Middleware
-if (app.Environment.IsDevelopment())
+/* if (app.Environment.IsDevelopment())
 {
     // Uncomment the following lines to enable Swagger in development
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+} */
 
 app.UseCors("AllowAllPolicy");
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
 // Uncomment the following line to enable OpenAPI documentation (Development Server)
-app.Urls.Add("http://*:5055");
+app.Urls.Add("http://*:8088");
 // app.Urls.Add("http://*:8080");
 
 app.Run();
