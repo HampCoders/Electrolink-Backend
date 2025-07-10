@@ -18,6 +18,9 @@ public sealed class MonitoringContextFacade(
     IUnitOfWork                       unitOfWork)
     : IMonitoringContextFacade
 {
+    public async Task<Guid> CreateServiceOperationForRequestAsync(Guid requestId, int technicianId)
+    {
+        // 1) Verificar que el Request exista en SDP.
         var requestDto = await sdpFacade.FetchRequestDetailsAsync(requestId.ToString());
         if (requestDto is null)
             throw new ArgumentException($"Request {requestId} not found in Service Design and Planning.");
