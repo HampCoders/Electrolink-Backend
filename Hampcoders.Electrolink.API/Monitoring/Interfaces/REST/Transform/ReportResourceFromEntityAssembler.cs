@@ -19,14 +19,13 @@ public class ReportResourceFromEntityAssembler
         return photos.Select(ToResourceFromEntity).ToList();
     }
 
-    public static ReportResource ToResourceFromEntity(Report entity)
+    public static ReportResource ToResourceFromEntity(Report entity, IEnumerable<ReportPhoto> photos)
     {
         return new ReportResource(
             entity.RequestId,
             entity.Description,
             entity.Date,
-            ToPhotoResourcesFromEntity(entity.Photos)
+            ToPhotoResourcesFromEntity(photos)
         );
     }
-
 }

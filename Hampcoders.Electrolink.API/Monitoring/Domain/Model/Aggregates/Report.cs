@@ -10,8 +10,10 @@ public class Report
     public string Description { get; private set; }
     public DateTime Date { get; private set; }
     
-    private readonly List<ReportPhoto> _photos = new();
+    private List<ReportPhoto> _photos = new();
     public IReadOnlyCollection<ReportPhoto> Photos => _photos;
+
+    // Constructor completo
     public Report(Guid reportId, Guid requestId, string description, DateTime date)
     {
         ReportId = reportId;
@@ -20,15 +22,15 @@ public class Report
         Date = date;
     }
 
+    // Constructor simplificado para crear un nuevo Report
     public Report(Guid requestId, string description)
         : this(Guid.NewGuid(), requestId, description, DateTime.UtcNow)
     {
     }
-
-    public void AddPhoto(string url, string type)
+    
+    public void SetPhotos(IEnumerable<ReportPhoto> photos)
     {
-        if (_photos.Any(p => p.Url == url && p.Type == type)) return;
-        _photos.Add(new ReportPhoto(Guid.NewGuid(), ReportId, url, type));
+        _photos.Clear();
+        _photos.AddRange(photos);
     }
-   
 }

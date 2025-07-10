@@ -4,10 +4,13 @@ using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Configura
 using EntityFrameworkCore.CreatedUpdatedDate.Extensions;
 using Hamcoders.Electrolink.API.Monitoring.Domain.Model.Aggregates;
 using Hamcoders.Electrolink.API.Monitoring.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using Hamcoders.Electrolink.API.Subscriptions.Domain.Model.Aggregates;
+using Hamcoders.Electrolink.API.Subscriptions.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Aggregates;
 using Hampcoders.Electrolink.API.Assets.Domain.Model.Entities;
 using Hampcoders.Electrolink.API.Assets.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using Hampcoders.Electrolink.API.IAM.Infrastructure.Persistence.EFC.Configuration.Extensions;
+using Hampcoders.Electrolink.API.Profiles.Domain.Model.Aggregates;
 using Hampcoders.Electrolink.API.Profiles.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Infrastructure.Persistence.EFC.Configuration.Extensions;
@@ -30,6 +33,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<ComponentType> ComponentTypes { get; set; }
     public DbSet<ComponentStock> ComponentStocks { get; set; }
     
+    public DbSet<Profile> Profiles { get; set; }
+    
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
         // Add the created and updated interceptor
@@ -47,7 +52,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         builder.ApplyAssetsConfiguration();
         builder.ApplyMonitoringConfiguration();
         builder.ApplyServiceDesignAndPlanningConfiguration();
-        
+        builder.ApplySubscriptionsConfiguration();
         builder.UseSnakeCaseNamingConvention();
 
     }

@@ -1,8 +1,11 @@
+using Hamcoders.Electrolink.API.Monitoring.Application.ACL;
 using Hamcoders.Electrolink.API.Monitoring.Domain.Model.Aggregates;
 using Hamcoders.Electrolink.API.Monitoring.Domain.Model.Commands;
 using Hamcoders.Electrolink.API.Monitoring.Domain.Model.Queries;
 using Hamcoders.Electrolink.API.Monitoring.Domain.Model.ValueObjects;
+using Hamcoders.Electrolink.API.Monitoring.Domain.Repository;
 using Hamcoders.Electrolink.API.Monitoring.Domain.Services;
+using Hamcoders.Electrolink.API.Monitoring.Interfaces.ACL;
 using Hamcoders.Electrolink.API.Monitoring.Interfaces.REST.Resources;
 using Hamcoders.Electrolink.API.Monitoring.Interfaces.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
@@ -16,23 +19,37 @@ namespace Hamcoders.Electrolink.API.Monitoring.Interfaces.REST;
 [SwaggerTag("Service Operation endpoints")]
 public class ServiceOperationsController(
     IServiceOperationCommandService commandService,
-    IServiceOperationQueryService queryService
+    IServiceOperationQueryService queryService, IMonitoringContextFacade monitoringContextFacade,
+    IServiceOperationRepository repository
 ) : ControllerBase
 {
-    // Crear servicio
     [HttpPost]
-    [SwaggerOperation(Summary = "Create Service Operation", Description = "Creates a new service operation.", OperationId = "CreateServiceOperation")]
+    [SwaggerOperation(
+        Summary = "Create Service Operation",
+        Description = "Creates a new service operation using a valid external RequestId from ServiceDesignAndPlanning.",
+        OperationId = "CreateServiceOperation")]
     [SwaggerResponse(StatusCodes.Status201Created, "Created", typeof(ServiceOperationResource))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid RequestId or input")]
     public async Task<IActionResult> CreateServiceOperation([FromBody] CreateServiceOperationResource resource)
     {
-        var command = CreateServiceOperationCommandFromResourceAssembler.ToCommandFromResource(resource);
-        var result = await commandService.Handle(command);
-        if (result == null) return BadRequest();
-        var resourceResult = ServiceOperationResourceFromEntityAssembler.ToResourceFromEntity(result);
-        return CreatedAtAction(nameof(GetStatusById), new { id = result.RequestId }, resourceResult);
+        try
+        {
+            // Usa el ACL en vez del CommandService directo
+            var requestId = await monitoringContextFacade.CreateServiceOperationForRequestAsync(resource.RequestId, resource.TechnicianId);
+
+            // Puedes consultar la entidad completa desde el repositorio si deseas retornar su representación
+            var entity = await repository.FindByIdAsync(requestId); // <- necesitas este método en el repo
+            if (entity == null) return NotFound();
+
+            var resourceResult = ServiceOperationResourceFromEntityAssembler.ToResourceFromEntity(entity);
+            return CreatedAtAction(nameof(GetStatusById), new { id = requestId }, resourceResult);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
-    // Cambiar estado
     [HttpPut("{id}/status")]
     [SwaggerOperation(Summary = "Update status", Description = "Updates the current status of the service operation.", OperationId = "UpdateServiceOperationStatus")]
     [SwaggerResponse(StatusCodes.Status200OK, "Updated", typeof(string))]

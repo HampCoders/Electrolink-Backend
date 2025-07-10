@@ -1,9 +1,17 @@
 using Cortex.Mediator.DependencyInjection;
+using Hamcoders.Electrolink.API.Monitoring.Application.ACL;
 using Hamcoders.Electrolink.API.Monitoring.Application.Internal.CommandServices;
 using Hamcoders.Electrolink.API.Monitoring.Application.Internal.QueryServices;
 using Hamcoders.Electrolink.API.Monitoring.Domain.Repository;
 using Hamcoders.Electrolink.API.Monitoring.Domain.Services;
+using Hamcoders.Electrolink.API.Monitoring.Infrastructure.Persistence.EFC.Repositories;
 using Hamcoders.Electrolink.API.Monitoring.Infrastructure.Persistence.EfCore;
+using Hamcoders.Electrolink.API.Monitoring.Interfaces.ACL;
+using Hamcoders.Electrolink.API.Subscriptions.Application.Internal;
+using Hamcoders.Electrolink.API.Subscriptions.Application.Internal.QueryServices;
+using Hamcoders.Electrolink.API.Subscriptions.Domain.Repository;
+using Hamcoders.Electrolink.API.Subscriptions.Domain.Services;
+using Hamcoders.Electrolink.API.Subscriptions.Infrastructure.Persistence.EFC.Repositories;
 using Hampcoders.Electrolink.API.Assets.Application.ACL;
 using Hampcoders.Electrolink.API.Assets.Application.Internal.CommandServices;
 using Hampcoders.Electrolink.API.Assets.Application.Internal.QueryServices;
@@ -31,13 +39,13 @@ using Hampcoders.Electrolink.API.Profiles.Domain.Repositories;
 using Hampcoders.Electrolink.API.Profiles.Domain.Services;
 using Hampcoders.Electrolink.API.Profiles.Infrastructure.Persistence.EFC.Repositories;
 using Hampcoders.Electrolink.API.Profiles.Interfaces.ACL;
-
+using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Application.ACL;
 using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Application.Internal.CommandServices;
 using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Application.Internal.QueryServices;
 using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Repositories;
 using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Services;
 using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Infrastructure.Persistence.EFC.Repositories;
-
+using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Interfaces.ACL;
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Configuration;
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Persistence.EFC.Repositories;
 using Hampcoders.Electrolink.API.Shared.Infrastructure.Interfaces.ASP.Configuration;
@@ -130,41 +138,37 @@ builder.Services.AddCors(options =>
 // Shared
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-// Monitoring
+// Dependency Injection
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IServiceOperationRepository, ServiceOperationRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<IReportPhotoRepository, ReportPhotoRepository>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
+
+// Domain services for Monitoring
 builder.Services.AddScoped<IServiceOperationCommandService, ServiceOperationCommandService>();
 builder.Services.AddScoped<IServiceOperationQueryService, ServiceOperationQueryService>();
 builder.Services.AddScoped<IReportCommandService, ReportCommandService>();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 builder.Services.AddScoped<IRatingCommandService, RatingCommandService>();
 builder.Services.AddScoped<IRatingQueryService, RatingQueryService>();
-
-// Assets
-builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
-builder.Services.AddScoped<ITechnicianInventoryRepository, TechnicianInventoryRepository>();
-builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
-builder.Services.AddScoped<IComponentTypeRepository, ComponentTypeRepository>();
-builder.Services.AddScoped<IPropertyCommandService, PropertyCommandService>();
-builder.Services.AddScoped<ITechnicianInventoryCommandService, TechnicianInventoryCommandService>();
-builder.Services.AddScoped<IComponentCommandService, ComponentCommandService>();
-builder.Services.AddScoped<IComponentTypeCommandService, ComponentTypeCommandService>();
-builder.Services.AddScoped<IPropertyQueryService, PropertyQueryService>();
-builder.Services.AddScoped<ITechnicianInventoryQueryService, TechnicianInventoryQueryService>();
-builder.Services.AddScoped<IComponentQueryService, ComponentQueryService>();
-builder.Services.AddScoped<IComponentTypeQueryService, ComponentTypeQueryService>();
-
-// SDP
-builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
-builder.Services.AddScoped<IRequestRepository, RequestRepository>();
-builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
+builder.Services.AddScoped<IPlanCommandService, PlanCommandService>();
+builder.Services.AddScoped<IPlanQueryService, PlanQueryService>();
+builder.Services.AddScoped<ISubscriptionCommandService, SubscriptionCommandService>();
+builder.Services.AddScoped<ISubscriptionQueryService, SubscriptionQueryService>();
 builder.Services.AddScoped<IServiceCommandService, ServiceCommandService>();
 builder.Services.AddScoped<IServiceQueryService, ServiceQueryService>();
 builder.Services.AddScoped<IRequestCommandService, RequestCommandService>();
 builder.Services.AddScoped<IRequestQueryService, RequestQueryService>();
 builder.Services.AddScoped<IScheduleCommandService, ScheduleCommandService>();
 builder.Services.AddScoped<IScheduleQueryService, ScheduleQueryService>();
+builder.Services.AddScoped<IMonitoringContextFacade, MonitoringContextFacade>();
+builder.Services.AddScoped<ISDPContextFacade, SDPContextFacade>();
 
 // Profiles
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
@@ -181,6 +185,19 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IHashingService, HashingService>();
 builder.Services.AddScoped<IIamContextFacade, IamContextFacade>();
 
+builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
+builder.Services.AddScoped<ITechnicianInventoryRepository, TechnicianInventoryRepository>();
+builder.Services.AddScoped<IComponentRepository, ComponentRepository>();
+builder.Services.AddScoped<IComponentTypeRepository, ComponentTypeRepository>();
+builder.Services.AddScoped<IPropertyCommandService, PropertyCommandService>();
+builder.Services.AddScoped<ITechnicianInventoryCommandService, TechnicianInventoryCommandService>();
+builder.Services.AddScoped<IComponentCommandService, ComponentCommandService>();
+builder.Services.AddScoped<IComponentTypeCommandService, ComponentTypeCommandService>();
+builder.Services.AddScoped<IPropertyQueryService, PropertyQueryService>();
+builder.Services.AddScoped<ITechnicianInventoryQueryService, TechnicianInventoryQueryService>();
+builder.Services.AddScoped<IComponentQueryService, ComponentQueryService>();
+builder.Services.AddScoped<IComponentTypeQueryService, ComponentTypeQueryService>();
+
 // Assets ACL
 builder.Services.AddScoped<IAssetsContextFacade, AssetsContextFacade>();
 builder.Services.AddScoped<ExternalAssetService>(); 
@@ -192,7 +209,6 @@ builder.Services.AddCortexMediator(
     {
         options.AddOpenCommandPipelineBehavior(typeof(LoggingCommandBehavior<>));
     });
-
 var app = builder.Build();
 
 // DB Init

@@ -14,7 +14,7 @@ public class RatingCommandService(
 {
     public async Task Handle(AddRatingCommand command)
     {
-        var exists = await _operationRepository.FindByGuidAsync(command.RequestId);
+        var exists = await _operationRepository.FindByIdAsync(command.RequestId);
         if (exists == null) throw new Exception("ServiceOperation not found");
 
         var existing = await _repository.GetByRequestIdAsync(command.RequestId);
@@ -27,7 +27,7 @@ public class RatingCommandService(
 
     public async Task Handle(DeleteRatingCommand command)
     {
-        var rating = await _repository.FindByGuidAsync(command.RatingId);
+        var rating = await _repository.FindByIdAsync(command.RatingId);
         if (rating == null)
             throw new KeyNotFoundException("Rating not found");
         _repository.Remove(rating);
@@ -36,7 +36,7 @@ public class RatingCommandService(
 
     public async Task Handle(UpdateRatingCommand command)
     {
-        var rating = await _repository.FindByGuidAsync(command.RatingId);
+        var rating = await _repository.FindByIdAsync(command.RatingId);
         if (rating == null)
             throw new Exception("Rating not found");
 
