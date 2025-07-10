@@ -13,7 +13,7 @@ public class RequestCommandService(
 {
     public async Task<Request> Handle(CreateRequestCommand command)
     {
-        var request = new Request(command);
+        var request = new Request(command); // ← ID se genera internamente
         await requestRepository.AddAsync(request);
         await unitOfWork.CompleteAsync();
         return request;
@@ -23,6 +23,7 @@ public class RequestCommandService(
     {
         var request = await requestRepository.FindByIdAsync(command.RequestId);
         if (request is null) return null;
+
         request.UpdateScheduledDate(command.ScheduledDate);
         request.AssignTechnician(command.TechnicianId);
         request.ProblemDescription = command.ProblemDescription;

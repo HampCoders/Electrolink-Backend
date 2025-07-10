@@ -7,10 +7,10 @@ namespace Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Model.A
 public partial class Request
 {
     public string RequestId { get; private set; }
-    public string ClientId { get; private set; }
-    public string TechnicianId { get; private set; }
-    public string PropertyId { get; private set; }
-    public string ServiceId { get; private set; }
+    public Guid ClientId { get; private set; }
+    public Guid TechnicianId { get; private set; }
+    public Guid PropertyId { get; private set; }
+    public Guid ServiceId { get; private set; }
     public string Status { get; private set; }
     public DateOnly ScheduledDate { get; private set; }
     public string ProblemDescription { get; set; }
@@ -18,14 +18,15 @@ public partial class Request
     public List<RequestPhoto> Photos { get; private set; } = new();
     public ElectricBill Bill { get; private set; }
 
-    public Request() {
+    public Request()
+    {
         Status = "Pending";
         ProblemDescription = string.Empty;
     }
 
-    public Request(CreateRequestCommand command) : this()
+    public Request(CreateRequestCommand command)
     {
-        RequestId = command.RequestId;
+        RequestId = Guid.NewGuid().ToString(); // ← ID autogenerado internamente
         ClientId = command.ClientId;
         TechnicianId = command.TechnicianId;
         PropertyId = command.PropertyId;
@@ -35,4 +36,5 @@ public partial class Request
         ProblemDescription = command.ProblemDescription;
         Bill = command.Bill;
     }
+    
 }

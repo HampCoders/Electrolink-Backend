@@ -3,12 +3,12 @@ namespace Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Model.E
 public class Schedule
 {
     public string ScheduleId { get; private set; }
-    public string TechnicianId { get; private set; }
+    public Guid TechnicianId { get; private set; }
     public string Day { get; private set; }
     public string StartTime { get; private set; }
     public string EndTime { get; private set; }
 
-    public Schedule(string scheduleId, string technicianId, string day, string startTime, string endTime)
+    public Schedule(string scheduleId, Guid  technicianId, string day, string startTime, string endTime)
     {
         ScheduleId = scheduleId;
         TechnicianId = technicianId;

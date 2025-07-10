@@ -9,10 +9,10 @@ public static class RequestResourceFromEntityAssembler
     public static RequestResource ToResourceFromEntity(Request r) =>
         new RequestResource(
             r.RequestId,
-            r.ClientId,
-            r.TechnicianId,
-            r.PropertyId,
-            r.ServiceId,
+            r.ClientId.ToString(),
+            r.TechnicianId.ToString(),
+            r.PropertyId.ToString(),
+            r.ServiceId.ToString(),
             r.ProblemDescription,
             r.ScheduledDate,
             r.Status,

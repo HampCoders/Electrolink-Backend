@@ -1,12 +1,16 @@
 using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Interfaces.REST.Resources;
+using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Model.ValueObjects;
 
 namespace Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Interfaces.REST.Resources;
-using Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Model.ValueObjects;
+
+/// <summary>
+/// Resource received from the client to create a new service request
+/// </summary>
 public record CreateRequestResource(
-    string ClientId,
-    string TechnicianId,
-    string PropertyId,
-    string ServiceId,
+    Guid ClientId,
+    Guid TechnicianId,
+    Guid PropertyId,
+    Guid ServiceId,
     string ProblemDescription,
     DateOnly ScheduledDate,
     ElectricBill Bill,

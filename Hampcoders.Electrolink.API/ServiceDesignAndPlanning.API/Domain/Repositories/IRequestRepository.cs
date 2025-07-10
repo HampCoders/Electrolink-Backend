@@ -5,7 +5,7 @@ namespace Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Domain.Reposit
 
 public interface IRequestRepository : IBaseRepository<Request>
 {
-    Task<IEnumerable<Request>> ListByClientIdAsync(string clientId);
+    Task<IEnumerable<Request>> ListByClientIdAsync(Guid clientId);
     Task<Request?> FindByIdAsync(string requestId);
     Task UpdateAsync(Request request);
     Task DeleteAsync(Request request);

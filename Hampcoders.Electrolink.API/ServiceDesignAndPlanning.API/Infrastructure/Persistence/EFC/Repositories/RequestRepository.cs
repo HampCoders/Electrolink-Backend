@@ -9,18 +9,20 @@ namespace Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Infrastructure
 public class RequestRepository(AppDbContext context)
     : BaseRepository<Request>(context), IRequestRepository
 {
-    public async Task<IEnumerable<Request>> ListByClientIdAsync(string clientId)
+    public async Task<IEnumerable<Request>> ListByClientIdAsync(Guid clientId)
     {
         return await context.Set<Request>()
             .Where(r => r.ClientId == clientId)
             .ToListAsync();
     }
 
+
     public async Task<Request?> FindByIdAsync(string requestId)
     {
         return await context.Set<Request>()
             .FirstOrDefaultAsync(r => r.RequestId == requestId);
     }
+
     public async Task UpdateAsync(Request request)
     {
         context.Set<Request>().Update(request);
@@ -32,5 +34,4 @@ public class RequestRepository(AppDbContext context)
         context.Set<Request>().Remove(request);
         await Task.CompletedTask;
     }
-    
 }

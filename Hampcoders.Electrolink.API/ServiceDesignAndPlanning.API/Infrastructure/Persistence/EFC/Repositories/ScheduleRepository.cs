@@ -9,7 +9,7 @@ namespace Hampcoders.Electrolink.API.ServiceDesignAndPlanning.API.Infrastructure
 public class ScheduleRepository(AppDbContext context)
     : BaseRepository<Schedule>(context), IScheduleRepository
 {
-    public async Task<IEnumerable<Schedule>> ListByTechnicianIdAsync(string technicianId)
+    public async Task<IEnumerable<Schedule>> ListByTechnicianIdAsync(Guid technicianId)
     {
         return await context.Set<Schedule>()
             .Where(s => s.TechnicianId == technicianId)
