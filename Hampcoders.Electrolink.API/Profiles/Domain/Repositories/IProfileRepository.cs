@@ -22,4 +22,8 @@ public interface IProfileRepository : IBaseRepository<Profile>
   /// <param name="role">The role to filter by (e.g., Homeowner or Technician).</param>
   /// <returns>A list of profiles matching the role.</returns>
   Task<IEnumerable<Profile>> FindByRoleAsync(Role role);
+  
+  Task<Profile?> FindByProfileIdAsync(int id);
+  
+  
 }

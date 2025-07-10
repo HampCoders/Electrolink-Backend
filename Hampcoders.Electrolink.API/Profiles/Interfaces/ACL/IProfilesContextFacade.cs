@@ -29,6 +29,12 @@ public interface IProfilesContextFacade
     /// Fetch the profile id by email
     /// </summary>
     Task<int> FetchProfileIdByEmail(string email);
+    
+    Task<Guid?> GetTechnicianIdByProfileIdAsync(int profileId);
+    
+    Task<(Guid technicianId, int userId)?> GetTechnicianInfoByProfileIdAsync(int profileId);
+    
+    Task<bool> ExistsTechnicianProfileByUserIdAsync(int userId);
 }
 
 

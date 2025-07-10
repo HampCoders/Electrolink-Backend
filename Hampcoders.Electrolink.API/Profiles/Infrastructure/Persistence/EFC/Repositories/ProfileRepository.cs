@@ -26,4 +26,12 @@ public class ProfileRepository(AppDbContext context)
       .Where(p => p.Role == role)
       .ToListAsync();
   }
+  
+
+  public async Task<Profile?> FindByProfileIdAsync(int id)
+  {
+    return await Context.Profiles
+      .Include(p => p.Technician) // si necesitas
+      .FirstOrDefaultAsync(p => p.Id == id);
+  }
 }

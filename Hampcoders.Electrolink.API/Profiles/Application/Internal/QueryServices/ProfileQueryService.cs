@@ -23,7 +23,7 @@ public class ProfileQueryService(IProfileRepository profileRepository) : IProfil
 
     public async Task<Profile?> Handle(GetProfileByIdQuery query)
     {
-        return await profileRepository.FindByIdAsync(query.Id);
+        return await profileRepository.FindByIdAsyncc(query.Id);
     }
 
     public async Task<Profile?> Handle(GetProfileByEmailQuery query)

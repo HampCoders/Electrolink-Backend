@@ -2,6 +2,7 @@
 using Hampcoders.Electrolink.API.Profiles.Domain.Model.Commands;
 using Hampcoders.Electrolink.API.Profiles.Domain.Model.Queries;
 using Hampcoders.Electrolink.API.Profiles.Domain.Model.ValueObjects;
+using Hampcoders.Electrolink.API.Profiles.Domain.Repositories;
 using Hampcoders.Electrolink.API.Profiles.Domain.Services;
 using Hampcoders.Electrolink.API.Profiles.Interfaces.ACL;
 
@@ -12,7 +13,7 @@ namespace Hampcoders.Electrolink.API.Profiles.Application.ACL;
 /// </summary>
 public class ProfilesContextFacade(
     IProfileCommandService profileCommandService,
-    IProfileQueryService profileQueryService
+    IProfileQueryService profileQueryService, IProfileRepository _profileRepository
 ) : IProfilesContextFacade
 {
     public async Task<int> CreateProfile(
@@ -59,5 +60,30 @@ public class ProfilesContextFacade(
         var getProfileByEmailQuery = new GetProfileByEmailQuery(new EmailAddress(email));
         var profile = await profileQueryService.Handle(getProfileByEmailQuery);
         return profile?.Id ?? 0;
+    }
+    
+    public async Task<Guid?> GetTechnicianIdByProfileIdAsync(int profileId)
+    {
+        var profile = await _profileRepository.FindByProfileIdAsync(profileId);
+
+        if (profile is null || profile.Role != Role.Technician || profile.Technician is null)
+            return null;
+
+        return profile.Technician.Id; // esto sí es un GUID, y está bien
+    }
+    
+    public async Task<(Guid technicianId, int userId)?> GetTechnicianInfoByProfileIdAsync(int profileId)
+    {
+        var profile = await _profileRepository.FindByProfileIdAsync(profileId);
+        if (profile is null || profile.Role != Role.Technician || profile.Technician is null)
+            return null;
+
+        return (profile.Technician.Id, profile.Id);
+    }
+
+    public async Task<bool> ExistsTechnicianProfileByUserIdAsync(int userId)
+    {
+        var profile = await _profileRepository.FindByProfileIdAsync(userId);
+        return profile is not null && profile.Role == Role.Technician;
     }
 }
