@@ -19,7 +19,6 @@ public static class CreateProfileCommandFromResourceAssembler
       : throw new ArgumentException($"Invalid role: {resource.Role}");
 
     return new CreateProfileCommand(
-      resource.UserId, // Asegúrate de que CreateProfileResource tenga esta propiedad
       resource.FirstName,
       resource.LastName,
       resource.Email,

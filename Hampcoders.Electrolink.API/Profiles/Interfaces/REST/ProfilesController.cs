@@ -7,6 +7,7 @@ using Hampcoders.Electrolink.API.Profiles.Interfaces.REST.Resources;
 using Hampcoders.Electrolink.API.Profiles.Interfaces.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Hampcoders.Electrolink.API.Profiles.Interfaces.REST;
 
@@ -17,37 +18,40 @@ namespace Hampcoders.Electrolink.API.Profiles.Interfaces.REST;
 public class ProfilesController(
     IProfileCommandService profileCommandService,
     IProfileQueryService profileQueryService)
-: ControllerBase
+    : ControllerBase
 {
+    [AllowAnonymous]
     [HttpPost]
-    [SwaggerOperation("Create Profile", "Create a new profile (Homeowner or Technician).", OperationId = "CreateProfile")]
-    [SwaggerResponse(201, "The profile was created.", typeof(ProfileResource))]
-    [SwaggerResponse(400, "The profile was not created.")]
+    [SwaggerOperation(
+        Summary = "Create Profile",
+        Description = "Create a new profile (Homeowner or Technician). No authentication required.",
+        OperationId = "CreateProfile")]
+    [SwaggerResponse(StatusCodes.Status201Created, "The profile was created.", typeof(ProfileResource))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "The profile was not created.")]
     public async Task<IActionResult> CreateProfile([FromBody] CreateProfileResource resource)
     {
         var command = CreateProfileCommandFromResourceAssembler.ToCommandFromResource(resource);
         var profile = await profileCommandService.Handle(command);
         if (profile is null) return BadRequest();
+
         var profileResource = ProfileResourceFromEntityAssembler.ToResourceFromEntity(profile);
         return CreatedAtAction(nameof(GetProfileById), new { profileId = profile.Id }, profileResource);
     }
 
     [HttpGet("{profileId:int}")]
-    [SwaggerOperation("Get Profile by Id", "Get a profile by its unique identifier.", OperationId = "GetProfileById")]
-    [SwaggerResponse(200, "The profile was found and returned.", typeof(ProfileResource))]
-    [SwaggerResponse(404, "The profile was not found.")]
+    [SwaggerOperation(Summary = "Get Profile by Id", OperationId = "GetProfileById")]
     public async Task<IActionResult> GetProfileById(int profileId)
     {
         var query = new GetProfileByIdQuery(profileId);
         var profile = await profileQueryService.Handle(query);
         if (profile is null) return NotFound();
+
         var resource = ProfileResourceFromEntityAssembler.ToResourceFromEntity(profile);
         return Ok(resource);
     }
 
     [HttpGet]
-    [SwaggerOperation("Get All Profiles", "Get all profiles.", OperationId = "GetAllProfiles")]
-    [SwaggerResponse(200, "The profiles were found and returned.", typeof(IEnumerable<ProfileResource>))]
+    [SwaggerOperation(Summary = "Get All Profiles", OperationId = "GetAllProfiles")]
     public async Task<IActionResult> GetAllProfiles()
     {
         var query = new GetAllProfilesQuery();
@@ -57,9 +61,7 @@ public class ProfilesController(
     }
 
     [HttpGet("by-role/{role}")]
-    [SwaggerOperation("Get Profiles by Role", "Get all profiles filtered by role.", OperationId = "GetProfilesByRole")]
-    [SwaggerResponse(200, "Profiles with the specified role returned.", typeof(IEnumerable<ProfileResource>))]
-    [SwaggerResponse(400, "Invalid role.")]
+    [SwaggerOperation(Summary = "Get Profiles by Role", OperationId = "GetProfilesByRole")]
     public async Task<IActionResult> GetProfilesByRole(string role)
     {
         if (!Enum.TryParse<Role>(role, true, out var parsedRole))
@@ -72,14 +74,13 @@ public class ProfilesController(
     }
 
     [HttpGet("by-email")]
-    [SwaggerOperation("Get Profile by Email", "Get a profile by its email address.", OperationId = "GetProfileByEmail")]
-    [SwaggerResponse(200, "The profile was found and returned.", typeof(ProfileResource))]
-    [SwaggerResponse(404, "No profile found with that email.")]
+    [SwaggerOperation(Summary = "Get Profile by Email", OperationId = "GetProfileByEmail")]
     public async Task<IActionResult> GetProfileByEmail([FromQuery] string email)
     {
-      var query = new GetProfileByEmailQuery(new EmailAddress(email));
+        var query = new GetProfileByEmailQuery(new EmailAddress(email));
         var profile = await profileQueryService.Handle(query);
         if (profile is null) return NotFound();
+
         var resource = ProfileResourceFromEntityAssembler.ToResourceFromEntity(profile);
         return Ok(resource);
     }
