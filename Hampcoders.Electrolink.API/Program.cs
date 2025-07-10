@@ -227,6 +227,9 @@ using (var scope = app.Services.CreateScope())
     app.UseSwaggerUI();
 } */
 
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.UseCors("AllowAllPolicy");
 //app.UseHttpsRedirection();
 app.UseAuthorization();
