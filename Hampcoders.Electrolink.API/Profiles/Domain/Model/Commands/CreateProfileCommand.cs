@@ -3,7 +3,6 @@ using Hampcoders.Electrolink.API.Profiles.Domain.Model.ValueObjects;
 namespace Hampcoders.Electrolink.API.Profiles.Domain.Model.Commands;
 
 public record CreateProfileCommand(
-  int UserId, // Nuevo campo obligatorio para vincular con un usuario existente
 
   string FirstName,
   string LastName,

@@ -6,7 +6,6 @@ namespace Hampcoders.Electrolink.API.Profiles.Interfaces.REST.Resources;
 /// Resource for creating a new profile (Homeowner or Technician)
 /// </summary>
 public record CreateProfileResource(
-  int UserId,
   string FirstName,
   string LastName,
   string Email,
