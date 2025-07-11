@@ -4,13 +4,15 @@ using Hamcoders.Electrolink.API.Subscriptions.Domain.Services;
 using Hamcoders.Electrolink.API.Subscriptions.Interfaces.REST.Resources;
 using Hamcoders.Electrolink.API.Subscriptions.Interfaces.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
+using Stripe.Checkout;
 
 namespace Hamcoders.Electrolink.API.Subscriptions.Interfaces.REST;
 
 [ApiController]
 [Route("api/v1/[controller]")]
 [Produces("application/json")]
-public class SubscriptionsController(ISubscriptionCommandService commandService, ISubscriptionQueryService queryService) : ControllerBase
+public class SubscriptionsController(ISubscriptionCommandService commandService, ISubscriptionQueryService queryService,  IConfiguration _cfg) : ControllerBase
 {
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -87,5 +89,31 @@ public class SubscriptionsController(ISubscriptionCommandService commandService,
     {
         await commandService.Handle(new ActivateBoostCommand(id, now));
         return NoContent();
+    }
+    
+    [HttpPost("session")]
+    public async Task<IActionResult> CreateCheckoutSession([FromBody] CheckoutSessionRequest req)
+    {
+        Stripe.StripeConfiguration.ApiKey = _cfg["Stripe:SecretKey"];
+
+        var options = new SessionCreateOptions
+        {
+            Mode = "subscription",
+            LineItems = new List<SessionLineItemOptions>
+            {
+                new()
+                {
+                    Price = "price_1RjXmlPOfORd3gqgBlMsuRlT",
+                    Quantity = 1
+                }
+            },
+            SuccessUrl = _cfg["Stripe:SuccessUrl"],
+            CancelUrl = _cfg["Stripe:CancelUrl"]
+        };
+
+        var service = new SessionService();
+        var session = await service.CreateAsync(options);
+
+        return Ok(new { url = session.Url });
     }
 }
