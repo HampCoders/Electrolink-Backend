@@ -14,7 +14,9 @@ public static class PropertyResourceFromEntityAssembler
             entity.Id.Id,
             fullAddress,
             entity.Region.Name,
-            entity.District.Name
+            entity.District.Name,
+            entity.Address.Latitude,
+            entity.Address.Longitude
             //entity.Status.ToString()
             );
     }
