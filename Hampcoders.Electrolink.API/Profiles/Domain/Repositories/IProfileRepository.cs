@@ -25,5 +25,6 @@ public interface IProfileRepository : IBaseRepository<Profile>
   
   Task<Profile?> FindByProfileIdAsync(int id);
   
+  Task<IEnumerable<Profile>> ListWithDetailsAsync();
   
 }
