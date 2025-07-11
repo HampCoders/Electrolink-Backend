@@ -14,7 +14,8 @@ public static class TechnicianInventoryResourceFromEntityAssembler
             stockItem.ComponentId.Id,
             componentNames.GetValueOrDefault(stockItem.ComponentId, "Unknown Component"),
             stockItem.QuantityAvailable,
-            stockItem.AlertThreshold
+            stockItem.AlertThreshold,
+            stockItem.LastUpdated
         )).ToList();
 
         return new TechnicianInventoryResource(entity.TechnicianId.Id, stockItemsResources);
