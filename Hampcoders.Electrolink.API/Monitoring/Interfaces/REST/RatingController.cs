@@ -31,7 +31,7 @@ public class RatingsController(
     }
     
     // Obtener rating
-    [HttpGet("{id}/rating")]
+    [HttpGet("{id}")]
     [SwaggerOperation(Summary = "Get rating", Description = "Gets the rating for a service operation.", OperationId = "GetRating")]
     [SwaggerResponse(StatusCodes.Status200OK, "Rating retrieved", typeof(Rating))]
     public async Task<IActionResult> GetRating(Guid id)
