@@ -11,8 +11,11 @@ public record ProfileResource(
   string StreetAddress,
   string Role, // "HomeOwner" o "Technician"
 
+
   // Campos opcionales dependiendo del rol
   string? Dni,
   string? LicenseNumber,
-  string? Specialization
+  string? Specialization,
+  Guid? HomeOwnerId, // Solo si es HomeOwner
+  Guid? TechnicianId // Solo si es Technician
 );

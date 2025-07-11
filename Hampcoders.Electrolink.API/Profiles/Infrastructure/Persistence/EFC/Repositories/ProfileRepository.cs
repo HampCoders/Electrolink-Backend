@@ -34,4 +34,12 @@ public class ProfileRepository(AppDbContext context)
       .Include(p => p.Technician) // si necesitas
       .FirstOrDefaultAsync(p => p.Id == id);
   }
+  
+  public async Task<IEnumerable<Profile>> ListWithDetailsAsync()
+  {
+    return await Context.Set<Profile>()
+      .Include(p => p.HomeOwner)
+      .Include(p => p.Technician)
+      .ToListAsync();
+  }
 }

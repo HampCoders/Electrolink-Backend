@@ -18,7 +18,9 @@ public static class ProfileResourceFromEntityAssembler
       entity.Role.ToString(),
       entity.HomeOwner?.Dni,
       entity.Technician?.LicenseNumber,
-      entity.Technician?.Specialization
+      entity.Technician?.Specialization,
+      entity.HomeOwner?.Id, // Solo si es HomeOwner
+      entity.Technician?.Id // Solo si es Technician
     );
   }
 }

@@ -11,9 +11,7 @@ namespace Hampcoders.Electrolink.API.Profiles.Application.Internal.QueryServices
 public class ProfileQueryService(IProfileRepository profileRepository) : IProfileQueryService
 {
     public async Task<IEnumerable<Profile>> Handle(GetAllProfilesQuery query)
-    {
-        return await profileRepository.ListAsync();
-    }
+        => await profileRepository.ListWithDetailsAsync();
 
     public async Task<IEnumerable<Profile>> Handle(GetProfilesByRoleQuery query)
     {
