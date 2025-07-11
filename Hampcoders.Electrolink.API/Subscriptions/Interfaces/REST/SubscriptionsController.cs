@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using Stripe.Checkout;
 
-namespace Hamcoders.Electrolink.API.Subscriptions.Interfaces.REST;
+namespace Hampcoders.Electrolink.API.Subscriptions.Interfaces.REST;
 
 [ApiController]
 [Route("api/v1/[controller]")]
